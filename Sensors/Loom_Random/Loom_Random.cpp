@@ -9,7 +9,7 @@ Loom_Random::Loom_Random(Manager &man) : Module() {
 
 void Loom_Random::initialize() {
     srand(time(NULL));
-    power_up(this);
+    this.power_up();
 }
 
 void Loom_Random::measure() {
