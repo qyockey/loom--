@@ -1,3 +1,6 @@
+#include <Arduino.h>
+#include <cstdint>
+
 #include "Loom_Manager.h"
 
 // Constructor -- do nothing

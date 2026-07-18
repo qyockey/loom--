@@ -4,7 +4,7 @@
 #include "Loom_Random.h"
 
 Loom_Random::Loom_Random(Manager &man) : Module() {
-    man->registerModule(this);
+    man.registerModule(this);
 }
 
 void Loom_Random::initialize() {

@@ -1,9 +1,6 @@
 #pragma once
 
-#include <Adafruit_Sensor.h>
-#include <Adafruit_Random.h>
-
-#include "Loom_Manager.h"
+#include "../../Loom_Manager.h"
 
 /**
  * Random Sensor
