@@ -3,8 +3,8 @@
 #include <map>
 #include <vector>
 
-#include "Loom_Manager.h"
-#include "Module.h"
+#include "../../Loom_Manager.h"
+#include "../../Module.h"
 
 /* Contain all the information regarding the analog pin that we want to use*/
 struct AnalogMapping {
