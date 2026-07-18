@@ -3,9 +3,8 @@
 
 #include "Loom_Random.h"
 
-Loom_Random::Loom_Random(Manager &man, uint8_t maximum) : Module() {
+Loom_Random::Loom_Random(Manager &man) : Module() {
     man->registerModule(this);
-    this.maximum = maximum;
 }
 
 void Loom_Random::initialize() {
@@ -17,7 +16,7 @@ void Loom_Random::measure() {
     if (!device_on) {
         value = 0;
     } else {
-        value = rand() % maximum;
+        value = rand() % 100;
     }
 }
 

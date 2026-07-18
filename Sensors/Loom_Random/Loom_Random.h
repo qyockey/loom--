@@ -25,6 +25,5 @@ class Loom_Random : public Module {
     Loom_Random(Manager &man);
   private:
     bool device_on;
-    uint8_t maximum;
     uint8_t value;
 };
