@@ -109,3 +109,4 @@ Miscellaneous
 - "There is nothing more permanent than a temporary fix"
 - How on earth is this going to compile?
 - File rename with git mv
+- Emphasize importance of status and log, readability
