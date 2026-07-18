@@ -83,24 +83,30 @@ Lesson
 5.  Git diff defaults to showing the difference of unstaged changes.  How can we
     view a diff of staged changes?  Use `git diff --help`.
 
-6.  Add a feature then revert.
-    TODO determine feature.
+6.  Add upper bound for random value.  Make random value 32 bits.
+    Use `git add --patch` to add and commit the 32 bit change.  Add the upper
+    bound change but do not commit.
 
-7.  Use checkout to browse code of other students to see different ways the task
+7.  Use `git reset` to undo the upper bound commit, then `git restore` to
+    discard it.
+
+8.  Use `git revert` to undo the 32 bit commit.
+
+9.  Use checkout to browse code of other students to see different ways the task
     was completed.
 
-8.  Have each student merge all branches together, selecting snippets they deem
+10. Have each student merge all branches together, selecting snippets they deem
     most appropriate.  Ensure that at bare minimum the final product includes
     names of all authors.
 
-9.  Instructor will add a conflicting change.  Use rebase instead of merge to
+11. Instructor will add a conflicting change.  Use rebase instead of merge to
     create a linear history.  This keeps the log clean and organized.
 
-10. Add separate branch that fails to compile.  Cherry pick single good commit
+12. Add separate branch that fails to compile.  Cherry pick single good commit
     from that branch.
     TODO determine branch, compilation error.
 
-11. Show .gitconfig for those interested.
+13. Show .gitconfig for those interested.
 
 
 Miscellaneous
