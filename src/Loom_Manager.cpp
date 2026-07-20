@@ -24,7 +24,7 @@ void Manager::beginSerial() {
 
 // Measure data from all modules
 void Manager::measure() {
-    for (int i = 0; i < modules.size(); i++) {
+    for (size_t i = 0; i < modules.size(); i++) {
         modules[i]->measure();
     }
 }
@@ -47,7 +47,7 @@ void Manager::power_down() {
 
 // Display data from all modules
 void Manager::display_data() {
-    for (int i = 0; i < modules.size(); i++) {
+    for (size_t i = 0; i < modules.size(); i++) {
         modules[i]->display_data();
     }
 }
@@ -55,7 +55,7 @@ void Manager::display_data() {
 
 // Initialize all modules
 void Manager::initialize() {
-    for (int i = 0; i < modules.size(); i++) {
+    for (size_t i = 0; i < modules.size(); i++) {
         modules[i]->initialize();
     }
 }
@@ -64,7 +64,7 @@ void Manager::initialize() {
 // Pause for specified time duration in ms
 // NOTE: CPU runs at 100% during pause, use hypnos.sleep for low power
 void Manager::pause(const uint32_t ms) const {
-    int waitTime = millis() + ms;
+    uint32_t waitTime = millis() + ms;
     while (millis() < waitTime) {
     }
 }
