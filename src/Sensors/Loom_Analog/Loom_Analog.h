@@ -31,8 +31,6 @@ struct AnalogMapping {
 class Loom_Analog : public Module {
   protected:
     /* These aren't used by Analog */
-    void power_up() override {};
-    void power_down() override {};
     void initialize() override {};
 
   public:

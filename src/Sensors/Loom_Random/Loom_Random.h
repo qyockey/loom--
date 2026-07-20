@@ -10,8 +10,6 @@ class Loom_Random : public Module {
     // Manager controlled functions
     void measure() override;
     void initialize() override;
-    void power_up() override;
-    void power_down() override;
     void display_data() override;
 
   public:
