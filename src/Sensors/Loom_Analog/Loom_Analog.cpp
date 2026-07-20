@@ -32,7 +32,7 @@ float Loom_Analog::getBatteryVoltage() {
     float pin_reading = analogRead(A7);
     pin_reading *= 2.0;
     pin_reading *= 3.3;
-    pin_reading /= 4096.0;
+    pin_reading /= 4095.0;
     return pin_reading;
 }
 
