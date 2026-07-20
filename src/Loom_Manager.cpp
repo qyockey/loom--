@@ -29,22 +29,6 @@ void Manager::measure() {
     }
 }
 
-// Power up all modules
-void Manager::power_up() {
-    for (int i = 0; i < modules.size(); i++) {
-        modules[i]->power_up();
-    }
-}
-
-
-// Power down all modules
-void Manager::power_down() {
-    for (int i = 0; i < modules.size(); i++) {
-        modules[i]->power_down();
-    }
-}
-
-
 // Display data from all modules
 void Manager::display_data() {
     for (size_t i = 0; i < modules.size(); i++) {

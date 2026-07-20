@@ -43,16 +43,6 @@ class Manager {
     void measure();
 
     /**
-     *  Calls the power_up function on each module to re-init after sleep
-     */
-    void power_up();
-
-    /**
-     *  Calls the power_down function on each module to safely enter sleep
-     */
-    void power_down();
-
-    /**
      * Prints out the current measured data to the Serial bus
      */
     void display_data();
