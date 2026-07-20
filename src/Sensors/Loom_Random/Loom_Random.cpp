@@ -1,10 +1,12 @@
+#include <Arduino.h>
 #include <cstdlib>
 #include <ctime>
 
 #include "Loom_Random.h"
 
 Loom_Random::Loom_Random(Manager &man) : Module() {
-    man.registerModule(this);
+    manInst = &man;
+    manInst->registerModule(this);
 }
 
 void Loom_Random::initialize() {

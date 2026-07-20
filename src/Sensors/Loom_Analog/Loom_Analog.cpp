@@ -22,21 +22,11 @@ void Loom_Analog::measure() {
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////
-void Loom_Analog::package() {
-    char output[10];
-    JsonObject json = manInst->get_data_object(getModuleName());
-
-    /* Loop over the list of pins and pull out the data to formulate the JSON entries*/
-    for (int i = 0; i < pinMappings.size(); i++) {
-        memset(output, '\0', 10);
-        json[pinMappings[i]->name] = pinMappings[i]->analog;
-
-        /* Append MV to the name to differentiate between normal analog and the millivolt
-         * representation */
-        strncat(output, pinMappings[i]->name, 10);
-        strncat(output, "_MV", 10);
-        json[output] = pinMappings[i]->analog_mv;
+void Loom_Analog::display_data() {
+    Serial.printf("Analog:\n");
+    for (size_t i = 0; i < pinMappings.size(); i++) {
+        Serial.printf("%s: %f\n", pinMappings[i]->name, pinMappings[i]->analog);
+        Serial.printf("%s_MV: %f\n", pinMappings[i]->name, pinMappings[i]->analog_mv);
     }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +65,7 @@ float Loom_Analog::getMV(int pin) {
             return pinMappings[i]->analog_mv;
         }
     }
+    return NAN;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -85,5 +76,6 @@ float Loom_Analog::getAnalog(int pin) {
             return pinMappings[i]->analog;
         }
     }
+    return NAN;
 }
 //////////////////////////////////////////////////////////////////////////////////////////////////////

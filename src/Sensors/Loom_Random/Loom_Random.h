@@ -20,7 +20,9 @@ class Loom_Random : public Module {
      * @param man Reference to the manager that is used to universally package all data
      */
     Loom_Random(Manager &man);
+
   private:
+    Manager *manInst;
     bool device_on;
     uint8_t value;
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <Arduino.h>
 #include <map>
 #include <vector>
 
@@ -36,7 +37,7 @@ class Loom_Analog : public Module {
 
   public:
     void measure() override;
-    void package() override;
+    void display_data() override;
 
     /**
      * Templated constructor that uses more than 1 analog pin
@@ -45,7 +46,7 @@ class Loom_Analog : public Module {
      * @param additionalPins Variable length argument allowing you to supply multiple pins
      */
     template <typename T, typename... Args>
-    Loom_Analog(Manager &man, T firstPin, Args... additionalPins) : Module("Analog") {
+    Loom_Analog(Manager &man, T firstPin, Args... additionalPins) : Module() {
         get_variadic_parameters(firstPin, additionalPins...);
         pinMappings.push_back(
             new AnalogMapping(A7, "Vbat", getBatteryVoltage(), getBatteryVoltage() * 1000));
@@ -63,7 +64,7 @@ class Loom_Analog : public Module {
      * @param man Reference to the manager
      * @param firstPin First analog pin we want to read from
      */
-    template <typename T> Loom_Analog(Manager &man, T firstPin) : Module("Analog") {
+    template <typename T> Loom_Analog(Manager &man, T firstPin) : Module() {
         pinMappings.push_back(new AnalogMapping(firstPin, pinNumberToName(firstPin), 0, 0));
         pinMappings.push_back(
             new AnalogMapping(A7, "Vbat", getBatteryVoltage(), getBatteryVoltage() * 1000));
@@ -80,7 +81,7 @@ class Loom_Analog : public Module {
      * Templated constructor that only reads the battery voltage
      * @param man Reference to the manager
      */
-    Loom_Analog(Manager &man) : Module("Analog") {
+    Loom_Analog(Manager &man) : Module() {
         manInst = &man;
         pinMappings.push_back(
             new AnalogMapping(A7, "Vbat", getBatteryVoltage(), getBatteryVoltage() * 1000));
