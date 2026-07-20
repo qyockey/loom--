@@ -36,13 +36,6 @@ float Loom_Analog::getBatteryVoltage() {
     return pin_reading;
 }
 
-char *Loom_Analog::pinNumberToName(int pin) {
-    // Malloc a name of size 4
-    char *name = (char *)malloc(sizeof(char) * 4);
-    snprintf_P(name, 4, PSTR("A%i"), pin - 14);
-    return name;
-}
-
 float Loom_Analog::analogToMV(int analog) {
     float analogRes = 4095.0;
     float voltage = (analog * 3.3) / analogRes;
