@@ -4,10 +4,15 @@
 
 #include "Module.h"
 
-#define BAUD_RATE 115200   // Serial interface baud rate
+// Serial interface baud rate
+#ifndef BAUD_RATE
+#define BAUD_RATE 115200
+#endif
 
 // Maximum number of modules the manager can manage
+#ifndef LOOM_MAX_MODULES
 #define LOOM_MAX_MODULES 16
+#endif
 
 /**
  * Unifies all the various sensors to allow for collection in unison
