@@ -1,11 +1,13 @@
 #pragma once
 
 #include <cstdint>
-#include <vector>
 
 #include "Module.h"
 
 #define BAUD_RATE 115200   // Serial interface baud rate
+
+// Maximum number of modules the manager can manage
+#define LOOM_MAX_MODULES 16
 
 /**
  * Unifies all the various sensors to allow for collection in unison
@@ -54,6 +56,7 @@ class Manager {
     void pause(const uint32_t ms) const;
 
   private:
-     // List of modules that have been added to the stack
-    std::vector<Module *> modules;
+    // List of modules that have been added to the stack
+    Module modules[LOOM_MAX_MODULES];
+    uint8_t numRegisteredModules;
 };

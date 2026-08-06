@@ -2,15 +2,31 @@
 #include <cstdint>
 
 #include "Loom_Manager.h"
+#include "Logger.h"
 
-// Constructor -- do nothing
+// Constructor
 Manager::Manager() {
+    numRegisteredModules = 0;
 }
 
 
 // Append module to array
 void Manager::registerModule(Module *module) {
-    modules.push_back(module);
+    if (LOOM_MAX_MODULES <= numRegisteredModules) {
+        Serial.printf(
+            "[ERROR] Maximum number of modules exceeded!\n"
+            "        Increase defined value of LOOM_MAX_MODULES (currently %u)\n"
+            "        For example, add this line at the top of your sketch\n"
+            "\n"
+            "        #define LOOM_MAX_MODULES 32\n"
+            "\n",
+            LOOM_MAX_MODULES
+        );
+        return
+    }
+
+    modules[numRegisteredModules] = module;
+    numRegisteredModules++;
 }
 
 
@@ -28,6 +44,7 @@ void Manager::measure() {
         modules[i]->measure();
     }
 }
+
 
 // Display data from all modules
 void Manager::display_data() {
