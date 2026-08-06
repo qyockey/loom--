@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <Adafruit_seesaw.h>
 
-#include "../../../Loom_Manager.h"
-#include "../../../Module.h"
-#include "Adafruit_seesaw.h"
+#include "Loom_Manager.h"
+#include "Module.h"
 
 /**
  * STEMMA Soil Moisture sensor

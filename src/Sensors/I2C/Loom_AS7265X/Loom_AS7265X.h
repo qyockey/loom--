@@ -2,10 +2,10 @@
 
 #include <cstdint>
 #include <Wire.h>
+#include <SparkFun_AS7265X.h>
 
-#include "../../../Module.h"
-#include "../../../Loom_Manager.h"
-#include "SparkFun_AS7265X.h"
+#include "Module.h"
+#include "Loom_Manager.h"
 
 /**
  * AS7265X Full Spectrum Sensor
