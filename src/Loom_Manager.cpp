@@ -62,6 +62,20 @@ void Manager::initialize() {
 }
 
 
+void Manager::power_down() {
+    for (size_t i = 0; i < modules.size(); i++) {
+        modules[i]->power_down();
+    }
+}
+
+
+void Manager::power_up() {
+    for (size_t i = 0; i < modules.size(); i++) {
+        modules[i]->power_up();
+    }
+}
+
+
 // Pause for specified time duration in ms
 // NOTE: CPU runs at 100% during pause, use hypnos.sleep for low power
 void Manager::pause(const uint32_t ms) const {
