@@ -1,132 +1,66 @@
 #pragma once
 
 #include <Arduino.h>
-#include <map>
-#include <vector>
 
-#include "../../Loom_Manager.h"
-#include "../../Module.h"
+#include "Loom_Manager.h"
+#include "Module.h"
 
-/* Contain all the information regarding the analog pin that we want to use*/
+#define PIN_VBAT 7
+#define ADC_RESOLUTION_BITS 12
+#define ADC_MAX_CODE ((1 << ADC_RESOLUTION_BITS) - 1)
+#define ADC_VREF 3.3F
+#define MAX_ANALOG_PINS 8
+
+/* Contain all the information regarding the analog pin that we want to use */
 struct AnalogMapping {
-    int pinNumber;
-    const char *name;
-    float analog;
-    float analog_mv;
-
-    /* Construct a new analog mapping */
-    AnalogMapping(int pinNumber, const char *name, float analog, float analog_mv) {
-        this->pinNumber = pinNumber;
-        this->name = name;
-        this->analog = analog;
-        this->analog_mv = analog_mv;
-    }
+    bool active;
+    uint16_t analogCode;
+    uint16_t analogMv;
 };
 
 /**
- * Used to read Analog voltages from the analog pins on the feather M0
+ * Used to read analog voltages from the analog pins on the feather M0
  *
  * @author Will Richards
  */
 class Loom_Analog : public Module {
-  protected:
-    /* These aren't used by Analog */
-    void initialize() override {};
-
   public:
+    void initialize() override;
     void measure() override;
     void display_data() override;
-
-    /**
-     * Templated constructor that uses more than 1 analog pin
-     * @param man Reference to the manager
-     * @param firstPin First analog pin we want to read from
-     * @param additionalPins Variable length argument allowing you to supply multiple pins
-     */
-    template <typename T, typename... Args>
-    Loom_Analog(Manager &man, T firstPin, Args... additionalPins) : Module() {
-        get_variadic_parameters(firstPin, additionalPins...);
-        pinMappings.push_back(
-            new AnalogMapping(A7, "Vbat", getBatteryVoltage(), getBatteryVoltage() * 1000));
-        manInst = &man;
-
-        // Set 12-bit analog read resolution
-        analogReadResolution(12);
-
-        // Register the module with the manager
-        manInst->registerModule(this);
-    };
-
-    /**
-     * Templated constructor that uses only 1 analog pin
-     * @param man Reference to the manager
-     * @param firstPin First analog pin we want to read from
-     */
-    template <typename T> Loom_Analog(Manager &man, T firstPin) : Module() {
-        pinMappings.push_back(new AnalogMapping(firstPin, pinNumberToName(firstPin), 0, 0));
-        pinMappings.push_back(
-            new AnalogMapping(A7, "Vbat", getBatteryVoltage(), getBatteryVoltage() * 1000));
-        manInst = &man;
-
-        // Set 12-bit analog read resolution
-        analogReadResolution(12);
-
-        // Register the module with the manager
-        manInst->registerModule(this);
-    };
+    void power_down() override {};
+    void power_up() override {};
 
     /**
      * Templated constructor that only reads the battery voltage
      * @param man Reference to the manager
      */
-    Loom_Analog(Manager &man) : Module() {
-        manInst = &man;
-        pinMappings.push_back(
-            new AnalogMapping(A7, "Vbat", getBatteryVoltage(), getBatteryVoltage() * 1000));
-
-        // Set 12-bit analog read resolution
-        analogReadResolution(12);
-
-        // Register the module with the manager
-        manInst->registerModule(this);
-    };
+    Loom_Analog(Manager &man);
 
     /**
-     * Get the current voltage of the battery
+     * Add a new pin to measure
+     * @param pin The pin to get the data from eg. A0, A1, ...
      */
-    static float getBatteryVoltage();
+    void addMeasuredPin(uint8_t pin);
 
     /**
      * @param pin The pin to get the data from eg. A0, A1, ...
      */
-    float getMV(int pin);
+    uint16_t getMv(uint8_t pin);
 
     /**
-     * Get the analog value from a given pin
+     * Get the analog ADC code from a given pin
      * @param pin The pin to get the data from eg. A0, A1, ...
      */
-    float getAnalog(int pin);
+    uint16_t getAnalogCode(uint8_t pin);
 
   private:
-    /**
-     *   The following two functions are some sorcery to get the variadic parameters without the
-     * need for passing in a size variable I don't fully understand it so don't touch it just works
-     *   Based off: https://eli.thegreenplace.net/2014/variadic-templates-in-c/
-     */
-    template <typename T> T get_variadic_parameters(T v) {
-        /* Push the pin number to vector */
-        pinMappings.push_back(new AnalogMapping(v, pinNumberToName(v), 0, 0));
-        return v;
-    };
+    /* Convert the analog ADC code to mV */
+    uint16_t analogToMV(uint16_t analogCode);
 
-    template <typename T, typename... Args> T get_variadic_parameters(T first, Args... args) {
-        pinMappings.push_back(new AnalogMapping(first, pinNumberToName(first), 0, 0));
-        return get_variadic_parameters(args...);
-    };
+    /* Keep track of active analog pins */
+    uint8_t activePins[MAX_ANALOG_PINS];
 
-    float analogToMV(int analog);   // Convert the analog voltage to mV
-    char *pinNumberToName(int pin); // Convert the given to a name with the style "A0"
-
-    Manager *manInst;                         // Instance of the manager
-    std::vector<AnalogMapping *> pinMappings; // Contains a struct for each pin we are monitoring
+    /* Measured values for each monitored pin */
+    struct AnalogMapping pinMappings[MAX_ANALOG_PINS];
 };
