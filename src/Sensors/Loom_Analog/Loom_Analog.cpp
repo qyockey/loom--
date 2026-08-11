@@ -1,61 +1,102 @@
 #include "Loom_Analog.h"
 
+Loom_Analog::Loom_Analog(Manager &man) : Module() {
+    /* Set all pins inactive */
+    for (uint8_t pinNumber = 0; pinNumber < MAX_ANALOG_PINS; pinNumber++) {
+        pinMappings[pinNumber].active = false;
+    }
+
+    /* Register the module with the manager */
+    man.registerModule(this);
+};
+
+void Loom_Analog::initialize() {
+    /* Configure ADC to mesure to desired resolution */
+    analogReadResolution(ADC_RESOLUTION_BITS);
+
+    /* Add battery voltage to measurement list */
+    addMeasuredPin(PIN_VBAT);
+}
+
+void Loom_Analog::addMeasuredPin(uint8_t pin) {
+    if (pin >= MAX_ANALOG_PINS) {
+        Serial.printf(
+            "[ERROR] Cannot measure analog pin %u, max is %u\n",
+            pin, MAX_ANALOG_PINS - 1
+        );
+    }
+
+    pinMappings[pin].active = true;
+}
+
 void Loom_Analog::measure() {
+    /* Read the data from the given analog pin */
+    for (uint8_t pinNumber = 0; pinNumber < MAX_ANALOG_PINS; pinNumber++) {
+        AnalogMapping *pinMapping = &pinMappings[pinNumber];
 
-    // Read the data from the given analog pin
-    for (size_t i = 0; i < pinMappings.size(); i++) {
-
-        /* If we are measuring the Vbat pin we want a little different behavior */
-        if (pinMappings[i]->pinNumber == A7) {
-            pinMappings[i]->analog = getBatteryVoltage();
-            pinMappings[i]->analog_mv = getBatteryVoltage() * 1000;
+        if (!pinMapping->active) {
+            continue;
         }
 
-        /* If its a normal pin then just read the value and update the previous values */
-        else {
-            int analogData = analogRead(pinMappings[i]->pinNumber);
-            pinMappings[i]->analog = analogData;
-            pinMappings[i]->analog_mv = analogToMV(analogData);
+        /* Read the ADC code convert to millivolts */
+        uint16_t analogCode = analogRead(pinNumber);
+        pinMapping->analogCode = analogCode;
+        pinMapping->analogMv = analogToMV(analogCode);
+
+        /* Battery is halved by voltage divider; restore it */
+        if (pinNumber == PIN_VBAT) {
+            pinMapping->analogMv *= 2;
         }
     }
 }
 
 void Loom_Analog::display_data() {
     Serial.printf("Analog:\n");
-    for (size_t i = 0; i < pinMappings.size(); i++) {
-        Serial.printf("%s: %f\n", pinMappings[i]->name, pinMappings[i]->analog);
-        Serial.printf("%s_MV: %f\n", pinMappings[i]->name, pinMappings[i]->analog_mv);
-    }
-}
-
-float Loom_Analog::getBatteryVoltage() {
-    float pin_reading = analogRead(A7);
-    pin_reading *= 2.0;
-    pin_reading *= 3.3;
-    pin_reading /= 4095.0;
-    return pin_reading;
-}
-
-float Loom_Analog::analogToMV(int analog) {
-    float analogRes = 4095.0;
-    float voltage = (analog * 3.3) / analogRes;
-    return voltage * 1000;
-}
-
-float Loom_Analog::getMV(int pin) {
-    for (size_t i = 0; i < pinMappings.size(); i++) {
-        if (pinMappings[i]->pinNumber == pin) {
-            return pinMappings[i]->analog_mv;
+    for (uint8_t pinNumber = 0; pinNumber < MAX_ANALOG_PINS; pinNumber++) {
+        const AnalogMapping *pinMapping = &pinMappings[pinNumber];
+        if (!pinMapping->active) {
+            continue;
         }
+
+        Serial.printf("    A%u", pinNumber);
+
+        if (pinNumber == PIN_VBAT) {
+            Serial.printf(" (Vbat)");
+        }
+
+        Serial.printf(
+            ": %u mV (code %u)\n",
+            pinMapping->analogMv, pinMapping->analogCode
+        );
     }
-    return NAN;
+    Serial.printf("\n");
 }
 
-float Loom_Analog::getAnalog(int pin) {
-    for (size_t i = 0; i < pinMappings.size(); i++) {
-        if (pinMappings[i]->pinNumber == pin) {
-            return pinMappings[i]->analog;
-        }
+/* Convert ADC code to voltage in millivolts */
+uint16_t Loom_Analog::analogToMV(uint16_t analogCode) {
+    float vrefFraction = analogCode / (float)ADC_MAX_CODE;
+    float pinVoltage = vrefFraction * ADC_VREF;
+
+    /* Convert from volts to millivolts */
+    return (uint16_t) (pinVoltage * 1000.0F);
+}
+
+uint16_t Loom_Analog::getMv(uint8_t targetPin) {
+    struct AnalogMapping *pinMapping = &pinMappings[targetPin];
+
+    if (!pinMapping->active) {
+        return UINT16_MAX;
     }
-    return NAN;
+
+    return pinMapping->analogMv;
+}
+
+uint16_t Loom_Analog::getAnalogCode(uint8_t targetPin) {
+    struct AnalogMapping *pinMapping = &pinMappings[targetPin];
+
+    if (!pinMapping->active) {
+        return UINT16_MAX;
+    }
+
+    return pinMapping->analogCode;
 }
