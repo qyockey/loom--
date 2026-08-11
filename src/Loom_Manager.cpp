@@ -18,6 +18,8 @@ void Manager::registerModule(Module *module) {
 void Manager::beginSerial() {
     Serial.begin(BAUD_RATE);
     while (!Serial) {
+        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+        delay(100);
     }
 }
 
