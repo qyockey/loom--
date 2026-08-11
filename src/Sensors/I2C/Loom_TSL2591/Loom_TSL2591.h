@@ -1,9 +1,10 @@
 #pragma once
 
-#include "../../../Adafruit_Sensor.h"
-#include "../../../Module.h"
-#include "../../../Loom_Manager.h"
-#include "Adafruit_TSL2591.h"
+#include <Adafruit_Sensor.h>
+#include <Adafruit_TSL2591.h>
+
+#include "Module.h"
+#include "Loom_Manager.h"
 
 /**
  * TSL2591 Light Sensor
