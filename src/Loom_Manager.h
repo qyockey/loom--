@@ -48,6 +48,16 @@ class Manager {
     void display_data();
 
     /**
+     * Clean up modules before cutting power
+     */
+    void power_down();
+
+    /**
+     * Reinitialize modules after power restored
+     */
+    void power_up();
+
+    /**
      * Pause execution for a specified length of time
      * @param ms Time to wait for in milliseconds
      */
