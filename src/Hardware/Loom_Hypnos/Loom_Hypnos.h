@@ -8,15 +8,15 @@
 
 #include "Loom_Manager.h"
 
-#define PIN_3V_RAIL 5
-#define PIN_5V_RAIL 6
+#define PIN_RAIL_3V 5
+#define PIN_RAIL_5V 6
 #define PIN_RTC_ALARM 12
 
 /* Set rail active states depending on transistor type uesd */
-#define 3V_RAIL_ON LOW
-#define 3V_RAIL_OFF HIGH
-#define 5V_RAIL_ON HIGH
-#define 5V_RAIL_OFF LOW
+#define RAIL_3V_ON LOW
+#define RAIL_3V_OFF HIGH
+#define RAIL_5V_ON HIGH
+#define RAIL_5V_OFF LOW
 
 /**
  * 
