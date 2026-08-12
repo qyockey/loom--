@@ -4,15 +4,15 @@ Loom_Hypnos::Loom_Hypnos(Manager& man) : Module() {
     manInst = &man;
 
     // Set the pins to write mode
-    pinMode(PIN_3V_RAIL, OUTPUT);
-    pinMode(PIN_5V_RAIL, OUTPUT);
+    pinMode(PIN_RAIL_3V, OUTPUT);
+    pinMode(PIN_RAIL_5V, OUTPUT);
 
     // Add the Hypnos to the module register
     manInst->registerModule(this);
 }
 
 void Loom_Hypnos::initialize() {
-    digitalWrite(PIN_3V_RAIL, 3V_RAIL_ON);
+    digitalWrite(PIN_RAIL_3V, RAIL_3V_ON);
     initializeRTC();
 }
 
