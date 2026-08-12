@@ -52,8 +52,6 @@ void Loom_Hypnos::initializeRTC() {
         return;
     }
 
-    Serial.printf("RTC started\n");
-
     /* If RTC loses power, set time manually unless the unit is deployed in the
      * field with no serial interface */
     if (RTC_DS.lostPower() && Serial) {
@@ -61,12 +59,8 @@ void Loom_Hypnos::initializeRTC() {
         setCustomTime();
     }
 
-    Serial.printf("Clearing alarms\n");
-
     // Clear any pending alarms
     RTC_DS.clearAlarm();
-
-    Serial.printf("Alarms cleared\n");
 
     /* Configure INT/SQW output pin to give active-low interrupt instead of
      * square wave */
