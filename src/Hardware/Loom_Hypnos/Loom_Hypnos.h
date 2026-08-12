@@ -19,6 +19,16 @@
 #define RAIL_5V_OFF LOW
 
 /**
+ * Enum to represent all power rail configurations
+ */
+enum PowerrailConfig {
+    PR_3V_ON_5V_ON   = (RAIL_3V_ON  << 1) | RAIL_5V_ON,
+    PR_3V_ON_5V_OFF  = (RAIL_3V_ON  << 1) | RAIL_5V_OFF,
+    PR_3V_OFF_5V_ON  = (RAIL_3V_OFF << 1) | RAIL_5V_ON,
+    PR_3V_OFF_5V_OFF = (RAIL_3V_OFF << 1) | RAIL_5V_OFF,
+};
+
+/**
  * 
  */
 class Loom_Hypnos : public Module{
@@ -44,6 +54,14 @@ class Loom_Hypnos : public Module{
     Loom_Hypnos(Manager& man); 
 
     /* RTC Functionality */
+
+    /**
+     * Set power rails to be either on or off
+     * Note: Do not attempt to transmit over I2C while the 3V rail is disabled.
+     * This will cause the device to hang because the 3V rail pulls up SCL & SDA
+     * @param railConfig Configuration of how 3V and 5V rails should turn on on off
+     */
+    void setPowerRails(PowerrailConfig railConfig);
 
     /**
      * Get the current time in UTC from the RTC

@@ -25,6 +25,23 @@ void Loom_Hypnos::display_data() {
     Serial.printf("\n");
 }
 
+/* Power Rail Control Functionality */
+
+void Loom_Hypnos::setPowerRails(PowerrailConfig railConfig) {
+    /* See enum PowerrailConfig in Loom_Hypnos.h
+     * railConfig = (3V << 1) | 5V
+     * Extract 5V by taking only bit 0
+     * Extract 3V by taking only bit 1 and shifting right
+     *
+     * This is a little silly but is justified because the prior implementation
+     * wasted 60+ lines
+     */
+    uint8_t rail5vOn = railConfig & 0x01;
+    uint8_t rail3vOn = (railConfig & 0x02) >> 1;
+    digitalWrite(PIN_RAIL_3V, rail3vOn);
+    digitalWrite(PIN_RAIL_5V, rail5vOn);
+
+}
 /* RTC */
 
 void Loom_Hypnos::initializeRTC() {
