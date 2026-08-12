@@ -29,7 +29,7 @@ enum PowerrailConfig {
 };
 
 /**
- * 
+ * Controls RTC, 3.3V/5V power rails, and SD card on the Hypnos board
  */
 class Loom_Hypnos : public Module{
   protected:
@@ -53,7 +53,7 @@ class Loom_Hypnos : public Module{
      */
     Loom_Hypnos(Manager& man); 
 
-    /* RTC Functionality */
+    /* Power Control Functionality */
 
     /**
      * Set power rails to be either on or off
@@ -62,6 +62,8 @@ class Loom_Hypnos : public Module{
      * @param railConfig Configuration of how 3V and 5V rails should turn on on off
      */
     void setPowerRails(PowerrailConfig railConfig);
+
+    /* RTC Functionality */
 
     /**
      * Get the current time in UTC from the RTC
@@ -75,12 +77,12 @@ class Loom_Hypnos : public Module{
 
   private:
 
-    Manager* manInst = nullptr;                                                         // Instance of the manager
+    Manager* manInst = nullptr;
 
     /* Real-Time Clock Settings */
 
-    RTC_DS3231 RTC_DS;                                                                  // Real time clock reference
-    void initializeRTC();                                                               // Initialize RTC
+    RTC_DS3231 RTC_DS;  // Real time clock reference
+    void initializeRTC();
 
     DateTime timeNowUtc; // Latest measured time
     DateTime timeAlarmUtc; // Time the alarm has been set for
