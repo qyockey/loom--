@@ -50,6 +50,7 @@ void Manager::beginSerial() {
 
 // Measure data from all modules
 void Manager::measure() {
+    Serial.printf("*** Measuring ***\n");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->measure();
     }
@@ -66,6 +67,7 @@ void Manager::display_data() {
 
 // Initialize all modules
 void Manager::initialize() {
+    Serial.printf("*** Initializing ***\n");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->initialize();
     }
@@ -73,6 +75,7 @@ void Manager::initialize() {
 
 
 void Manager::power_down() {
+    Serial.printf("*** Powering Down ***\n");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_down();
     }
@@ -80,6 +83,7 @@ void Manager::power_down() {
 
 
 void Manager::power_up() {
+    Serial.printf("*** Powering Up ***\n");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_up();
     }
