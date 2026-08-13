@@ -4,14 +4,19 @@
 
 #include "Module.h"
 
-// Serial interface baud rate
-#ifndef BAUD_RATE
-#define BAUD_RATE 115200
-#endif
-
 // Maximum number of modules the manager can manage
 #ifndef LOOM_MAX_MODULES
 #define LOOM_MAX_MODULES 8
+#endif
+
+// Serial interface baud rate
+#ifndef BAUD_RATE
+#define BAUD_RATE 115200U
+#endif
+
+// Wait up to 20s for Serial
+#ifndef LOOM_SERIAL_WAIT_MS
+#define LOOM_SERIAL_WAIT_MS 20000U
 #endif
 
 /**
@@ -35,7 +40,9 @@ class Manager {
     void registerModule(Module *module);
 
     /**
-     * Start the Serial interface
+     * Start the serial interface.  Abort if the operation exceeds
+     * LOOM_SERIAL_WAIT_MS so that field deployments don't hang while waiting
+     * for a serial connection.
      */
     void beginSerial();
 
@@ -72,6 +79,6 @@ class Manager {
 
   private:
     // List of modules that have been added to the stack
-    Module modules[LOOM_MAX_MODULES];
+    Module *modules[LOOM_MAX_MODULES];
     uint8_t numRegisteredModules;
 };

@@ -2,7 +2,6 @@
 #include <cstdint>
 
 #include "Loom_Manager.h"
-#include "Logger.h"
 
 // Constructor
 Manager::Manager() {
@@ -22,7 +21,7 @@ void Manager::registerModule(Module *module) {
             "\n",
             LOOM_MAX_MODULES
         );
-        return
+        return;
     }
 
     modules[numRegisteredModules] = module;
@@ -32,8 +31,17 @@ void Manager::registerModule(Module *module) {
 
 // Initialize Serial interface
 void Manager::beginSerial() {
+    long startMillis = millis();
+
     Serial.begin(BAUD_RATE);
     while (!Serial) {
+
+        // Abort if time elapsed exceeds acceptable duration
+        if (millis() >= (startMillis + LOOM_SERIAL_WAIT_MS)) {
+            break;
+        }
+
+        // Flash LED as visual indicator of waiting
         digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
         delay(100);
     }
@@ -65,14 +73,14 @@ void Manager::initialize() {
 
 
 void Manager::power_down() {
-    for (size_t i = 0; i < modules.size(); i++) {
+    for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_down();
     }
 }
 
 
 void Manager::power_up() {
-    for (size_t i = 0; i < modules.size(); i++) {
+    for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_up();
     }
 }
