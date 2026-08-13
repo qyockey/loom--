@@ -1,16 +1,16 @@
 #include "Loom_Analog.h"
 
 Loom_Analog::Loom_Analog(Manager &man) : Module() {
-    /* Set all pins inactive */
-    for (uint8_t pinNumber = 0; pinNumber < MAX_ANALOG_PINS; pinNumber++) {
-        pinMappings[pinNumber].active = false;
-    }
-
     /* Register the module with the manager */
     man.registerModule(this);
 };
 
 void Loom_Analog::initialize() {
+    /* Set all pins inactive */
+    for (uint8_t pinNumber = 0; pinNumber < MAX_ANALOG_PINS; pinNumber++) {
+        pinMappings[pinNumber].active = false;
+    }
+
     /* Configure ADC to mesure to desired resolution */
     analogReadResolution(ADC_RESOLUTION_BITS);
 
