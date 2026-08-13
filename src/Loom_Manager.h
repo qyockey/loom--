@@ -11,7 +11,7 @@
 
 // Maximum number of modules the manager can manage
 #ifndef LOOM_MAX_MODULES
-#define LOOM_MAX_MODULES 16
+#define LOOM_MAX_MODULES 8
 #endif
 
 /**
