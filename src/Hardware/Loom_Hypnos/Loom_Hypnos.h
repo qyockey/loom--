@@ -20,6 +20,8 @@
 
 /**
  * Enum to represent all power rail configurations
+ *
+ * Use bit 1 to store 3V state and bit 0 for 5V for convenience.
  */
 enum PowerrailConfig {
     PR_3V_ON_5V_ON   = (RAIL_3V_ON  << 1) | RAIL_5V_ON,
@@ -29,39 +31,53 @@ enum PowerrailConfig {
 };
 
 /**
- * Controls RTC, 3.3V/5V power rails, and SD card on the Hypnos board
+ * Controls RTC, 3.3V/5V power rails, and SD card on the Hypnos board.
+ *
+ * The hypnos is treated as a module because the RTC time is a measured quantity
  */
 class Loom_Hypnos : public Module{
   protected:
 
-    /* These aren't used with the Hypnos */
+    /* These aren't used with the Hypnos.
+     * measure() *could* be used to record the current time, but we instead
+     * prefer to record it during package.
+     * power_down() and power_up() also *could* be implemented, but the logic is
+     * cleaner and easier to understand when all inside sleep()
+     */
     void measure() override {};
     void power_up() override {};
     void power_down() override {};
 
-    /* Initialize RTC and power rails */
+    /* Initialize power rails and RTC */
     void initialize() override;
 
-    /* Display current time */
+    /* Display current time in UTC */
     void display_data() override;
 
   public:
 
     /**
-     * Constructs a new Hypnos Instance using the manager to hold information about the device
+     * Constructs a new Hypnos instance and registers it with the manager
      * @param man Reference to the manager
      */
-    Loom_Hypnos(Manager& man); 
+    Loom_Hypnos(Manager& man);
 
     /* Power Control Functionality */
 
     /**
-     * Set power rails to be either on or off
-     * Note: Do not attempt to transmit over I2C while the 3V rail is disabled.
-     * This will cause the device to hang because the 3V rail pulls up SCL & SDA
-     * @param railConfig Configuration of how 3V and 5V rails should turn on on off
+     * Set the configuration for the power rails when waking up from sleep
+     *
+     * NOTE: 3V rail should always be on while awake.
+     * Because the 3V rail pulls up SDA and SCL, any attempted I2C transmission
+     * while the rail is off will fail and cause the device to hang.
+     * This should not be a problem under normal circumstances.
+     *
+     * @param config The desired configuration while the device is awake
+     * See enum PowerrailConfig.
      */
-    void setPowerRails(PowerrailConfig railConfig);
+    void setWakeConfiguration(PowerrailConfig config) {
+        railConfigAwake = config;
+    };
 
     /**
      * Set the configuration for the power rails when going to sleep
@@ -95,17 +111,36 @@ class Loom_Hypnos : public Module{
 
     Manager* manInst = nullptr;
 
-    /* Real-Time Clock Settings */
+    /* Power rails */
 
-    RTC_DS3231 RTC_DS;  // Real time clock reference
+    /**
+     * Set power rails to be either on or off
+     *
+     * NOTE: Do not attempt to transmit over I2C while the 3V rail is disabled.
+     * See note above setWakeConfiguration() for more information.
+     *
+     * @param railConfig Configuration of how 3V and 5V rails should turn on
+     * or off
+     * See enum PowerrailConfig.
+     */
+    void setPowerRails(PowerrailConfig railConfig);
+
+    /* Power rail configuration for when the device is awake */
+    PowerrailConfig railConfigAwake = PR_3V_ON_5V_ON;
+    /* Power rail configuration for the when the device is asleep */
+    PowerrailConfig railConfigAsleep = PR_3V_OFF_5V_OFF;
+
+    /* Real-Time Clock (RTC) */
+
+    /* RTC instance */
+    RTC_DS3231 RTC_DS;
+
     void initializeRTC();
+    void dateTimePrint(DateTime time, bool newline = true);
 
-    DateTime timeNowUtc; // Latest measured time
-    DateTime timeAlarmUtc; // Time the alarm has been set for
+    /* Prompt user for integer */
+    int16_t serialReadInt(const char *prompt, int16_t min, int16_t max);
 
-    char timeString[21]; // Buffer to write time strings into
-    void dateTime_toString(DateTime time, char *timeString);
-    void dateTime_print(DateTime time);
     /**
      * Set a custom time on startup for the RTC to use
      * This function is only automatically called
