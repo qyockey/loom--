@@ -5,7 +5,8 @@
 
 #include "Module.h"
 
-#define BAUD_RATE 115200   // Serial interface baud rate
+#define BAUD_RATE 115200U   // Serial interface baud rate
+#define LOOM_SERIAL_WAIT_MS 20000U  // Wait up to 20s for Serial
 
 /**
  * Unifies all the various sensors to allow for collection in unison
@@ -28,7 +29,9 @@ class Manager {
     void registerModule(Module *module);
 
     /**
-     * Start the Serial interface
+     * Start the serial interface.  Abort if the operation exceeds
+     * LOOM_SERIAL_WAIT_MS so that field deployments don't hang while waiting
+     * for a serial connection.
      */
     void beginSerial();
 

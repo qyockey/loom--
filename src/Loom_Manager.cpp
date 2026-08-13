@@ -16,8 +16,17 @@ void Manager::registerModule(Module *module) {
 
 // Initialize Serial interface
 void Manager::beginSerial() {
+    long startMillis = millis();
+
     Serial.begin(BAUD_RATE);
     while (!Serial) {
+
+        // Abort if time elapsed exceeds acceptable duration
+        if (millis() >= (startMillis + LOOM_SERIAL_WAIT_MS)) {
+            break;
+        }
+
+        // Flash LED as visual indicator of waiting
         digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
         delay(100);
     }
