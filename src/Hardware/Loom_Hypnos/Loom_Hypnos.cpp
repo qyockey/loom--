@@ -68,39 +68,27 @@ void Loom_Hypnos::initializeRTC() {
 
     Serial.printf("DS3231 real-time clock initialized successfully!\n");
     Serial.printf("UTC time now: ");
-    dateTime_print(getCurrentTimeUtc());
-    Serial.printf("\n");
+    dateTimePrint(RTC_DS.now());
 }
 
 DateTime Loom_Hypnos::getCurrentTimeUtc() {
     return RTC_DS.now();
 }
 
-void Loom_Hypnos::dateTime_toString(DateTime time, char *timeString) {
-    // Formatted as: YYYY-MM-DDTHH:MM:SSZ
-    /* Use modulus to limit number of digits strictly.  Otherwise compiler will
-     * yell about 5 digit years and buffer overflows. */
-    snprintf(timeString, 21, "%04u-%02u-%02uT%02u:%02u:%02uZ",
-        (time.year() % 10000),
-        (time.month() % 100),
-        (time.day() % 100),
-        (time.hour() % 100),
-        (time.minute() % 100),
-        (time.second() % 100)
-    );
-}
-
-void Loom_Hypnos::dateTime_print(DateTime time) {
-    // Formatted as: YYYY-MM-DDTHH:MM:SSZ
+void Loom_Hypnos::dateTimePrint(DateTime time, bool newline) {
+    /* Formatted as: YYYY-MM-DDTHH:MM:SSZ */
     Serial.printf("%04u-%02u-%02uT%02u:%02u:%02uZ",
         time.year(), time.month(), time.day(),
         time.hour(), time.minute(), time.second()
     );
+    if (newline) {
+        Serial.write('\n');
+    }
 }
 
-int16_t readInt(const char *prompt, int16_t min, int16_t max) {
+int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max) {
     while (true) {
-        Serial.printf("\n%s (%d-%d)\n", prompt, min, max);
+        Serial.printf("%s (%d-%d)\n", prompt, min, max);
 
         // Block until at least one byte arrives in the Serial buffer
         while (Serial.available() == 0) {
@@ -109,9 +97,15 @@ int16_t readInt(const char *prompt, int16_t min, int16_t max) {
 
         long value_long = Serial.parseInt();
 
-        // Clear any leftover newline or carriage return characters from the buffer
-        while (Serial.available() && (Serial.peek() == '\r' || Serial.peek() == '\n')) {
-            Serial.read();
+        /* Clear any leftover newline or carriage return characters from the
+         * buffer */
+        while (Serial.available()) {
+            char next = Serial.peek();
+            if (next == '\r' || next == '\n') {
+                Serial.read();
+            } else {
+                break;
+            }
         }
 
         int16_t value_16 = (int16_t) value_long;
@@ -130,22 +124,25 @@ int16_t readInt(const char *prompt, int16_t min, int16_t max) {
 }
 
 void Loom_Hypnos::setCustomTime() {
+    /* Print call is broken up, otherwise last line is mysteriously truncated */
     Serial.printf(
         "\n"
-        "###################################\n"
-        "# Please use UTC time, not local! #\n"
-        "###################################\n"
+        "############################\n"
+        "# Use UTC time, not local! #\n"
+    );
+    delay(1);
+    Serial.printf(
+        "############################\n"
         "\n"
     );
 
-    int16_t computer_year = readInt("Enter the year", 2000, 9999);
-    int16_t computer_month = readInt("Enter the month", 1, 12);
-    int16_t computer_day = readInt("Enter the day", 1, 31);
-    int16_t computer_hour = readInt("Enter the hour", 0, 23);
-    int16_t computer_minute = readInt("Enter the minute", 0, 59);
-    int16_t computer_second = readInt("Enter the second", 0, 59);
+    int16_t computer_year = serialReadInt("Enter the year", 2000, 9999);
+    int16_t computer_month = serialReadInt("Enter the month", 1, 12);
+    int16_t computer_day = serialReadInt("Enter the day", 1, 31);
+    int16_t computer_hour = serialReadInt("Enter the hour", 0, 23);
+    int16_t computer_minute = serialReadInt("Enter the minute", 0, 59);
+    int16_t computer_second = serialReadInt("Enter the second", 0, 59);
 
-    // Set the RTC to the custom time
     DateTime newTimeUtc = DateTime(
         computer_year, computer_month, computer_day,
         computer_hour, computer_minute, computer_second
@@ -153,8 +150,7 @@ void Loom_Hypnos::setCustomTime() {
     RTC_DS.adjust(newTimeUtc);
 
     Serial.printf("Custom time successfully set to: %s");
-    dateTime_print(getCurrentTimeUtc());
-    Serial.printf("\n");
+    dateTimePrint(RTC_DS.now());
 }
 
 /* Sleep Functionality */
