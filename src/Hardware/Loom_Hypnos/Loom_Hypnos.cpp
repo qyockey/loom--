@@ -156,3 +156,66 @@ void Loom_Hypnos::setCustomTime() {
     dateTime_print(getCurrentTimeUtc());
     Serial.printf("\n");
 }
+
+/* Sleep Functionality */
+
+void Loom_Hypnos::sleep(TimeSpan duration) {
+    /* Prepare modules for sleep */
+    manInst->power_down();
+
+    /* Safeguard: clear alarms if any have somehow activated */
+    RTC_DS.clearAlarm();
+
+    Serial.printf("Setting RTC alarm\n");
+    DateTime timeAlarmUtc = RTC_DS.now() + duration;
+    RTC_DS.setAlarm(timeAlarmUtc);
+    Serial.printf("RTC alarm set for ");
+    dateTimePrint(timeAlarmUtc);
+
+    /* Set interrupt to monitor RTC alarm pin (#12).  This pin idles high then
+     * is driven low by the RTC when it is time to wake up. */
+    Serial.printf("Attaching RTC alarm interrupt\n");
+    pinMode(PIN_RTC_ALARM, INPUT_PULLUP);
+    /* Attaching twice, otherwise device won't wake up (not super sure why) */
+    LowPower.attachInterruptWakeup(digitalPinToInterrupt(PIN_RTC_ALARM), wakeup, LOW);
+    LowPower.attachInterruptWakeup(digitalPinToInterrupt(PIN_RTC_ALARM), wakeup, LOW);
+
+    /* Allow time for message to get through before Serial bus loses power */
+    Serial.printf("Entering standby sleep\n");
+    delay(50);
+
+    /* Cut power */
+    Serial.end();
+    USBDevice.detach();
+    setPowerRails(railConfigAsleep);
+    digitalWrite(LED_BUILTIN, LOW);
+
+    /* Enter low-power consumption deep-sleep state.
+     * Microcontroller will do nothing until the RTC alarm triggers. */
+    LowPower.sleep();
+
+    /* Restore power */
+    digitalWrite(LED_BUILTIN, HIGH);
+    setPowerRails(railConfigAwake);
+    USBDevice.attach();
+    manInst->beginSerial();
+
+    /* Acknowledge RTC alarm.  The RTC will deassert its alarm so that the
+     * interrupt pin returns high to an idle state. */
+    RTC_DS.clearAlarm();
+
+    /* Allow time for Serial connection to establish with computer */
+    delay(1000);
+    Serial.printf("Waking from sleep\n");
+
+    /* Re-initialize all modules */
+    manInst->power_up();
+}
+
+void Loom_Hypnos::wakeup() {
+    /* Detach the interrupt immediately so it doesn't trigger again.
+     * Otherwise this function gets called over and over in an infinite loop.
+     * After returning, control flow moves to the line just after
+     * the call to LowPower.sleep() where we start restoring power. */
+    detachInterrupt(digitalPinToInterrupt(PIN_RTC_ALARM));
+}
