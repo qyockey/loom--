@@ -3,26 +3,26 @@
 Loom_Hypnos::Loom_Hypnos(Manager& man) : Module() {
     manInst = &man;
 
-    // Set the pins to write mode
+    /* Set the rail pins to output mode */
     pinMode(PIN_RAIL_3V, OUTPUT);
     pinMode(PIN_RAIL_5V, OUTPUT);
 
-    // Add the Hypnos to the module register
     manInst->registerModule(this);
 }
 
 void Loom_Hypnos::initialize() {
-    digitalWrite(PIN_RAIL_3V, RAIL_3V_ON);
+    setPowerRails(railConfigAwake);
     initializeRTC();
 }
 
 void Loom_Hypnos::display_data() {
-    Serial.printf("Hypnos:\n");
-    timeNowUtc = getCurrentTimeUtc();
-    dateTime_toString(timeNowUtc, timeString);
+    Serial.printf(
+        "Hypnos:\n"
+        "    Time UTC: "
+    );
 
-    Serial.printf("    Time UTC: %s\n", timeString);
-    Serial.printf("\n");
+    DateTime timeNowUtc = RTC_DS.now();
+    dateTimePrint(timeNowUtc);
 }
 
 /* Power Rail Control Functionality */
@@ -42,6 +42,7 @@ void Loom_Hypnos::setPowerRails(PowerrailConfig railConfig) {
     digitalWrite(PIN_RAIL_5V, rail5vOn);
 
 }
+
 /* RTC */
 
 void Loom_Hypnos::initializeRTC() {
@@ -59,7 +60,7 @@ void Loom_Hypnos::initializeRTC() {
         setCustomTime();
     }
 
-    // Clear any pending alarms
+    /* Clear any pending alarms */
     RTC_DS.clearAlarm();
 
     /* Configure INT/SQW output pin to give active-low interrupt instead of
@@ -90,7 +91,7 @@ int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max)
     while (true) {
         Serial.printf("%s (%d-%d)\n", prompt, min, max);
 
-        // Block until at least one byte arrives in the Serial buffer
+        /* Block until at least one byte arrives in the Serial buffer */
         while (Serial.available() == 0) {
             delay(10);
         }
