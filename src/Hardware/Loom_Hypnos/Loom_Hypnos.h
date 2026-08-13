@@ -63,17 +63,33 @@ class Loom_Hypnos : public Module{
      */
     void setPowerRails(PowerrailConfig railConfig);
 
+    /**
+     * Set the configuration for the power rails when going to sleep
+     * @param config The desired configuration while the device is asleep
+     * See enum PowerrailConfig.
+     */
+    void setSleepConfiguration(PowerrailConfig config) {
+        railConfigAsleep = config;
+    };
+
+    /* Sleep Functionality */
+
+    /**
+     * Drops the Feather M0 and Hypnos board into a low power sleep waiting for
+     * an interrupt to wake it up and pull it out of sleep.
+     * This is much more power efficient for long delays than calling
+     * manager.pause()
+     * @param duration The time that will elapse before the device is woken by
+     * the RTC
+     */
+    void sleep(TimeSpan duratiwon);
+
     /* RTC Functionality */
 
     /**
-     * Get the current time in UTC from the RTC
+     * Get the current UTC time from the RTC
      */
     DateTime getCurrentTimeUtc();
-
-    /**
-     * Set a custom time on startup for the RTC to use
-    */
-    void setCustomTime();
 
   private:
 
@@ -90,4 +106,14 @@ class Loom_Hypnos : public Module{
     char timeString[21]; // Buffer to write time strings into
     void dateTime_toString(DateTime time, char *timeString);
     void dateTime_print(DateTime time);
+    /**
+     * Set a custom time on startup for the RTC to use
+     * This function is only automatically called
+     */
+    void setCustomTime();
+
+    /* Sleep functionality */
+    static void wakeup();
+    void setWakeupAlarm(DateTime timeAlarmUtc);
 };
+
