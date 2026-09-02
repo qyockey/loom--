@@ -86,6 +86,12 @@ class Manager {
     int get_instance_num() { return instanceNumber; };
 
     /**
+     * Get the unique serial number of the Feather m0
+     * @return Unique serial number
+     */
+    const char *get_serial_num() { return serial_num; };
+
+    /**
      * Pause execution for a specified length of time
      * @param ms Time to wait for in milliseconds
      */
@@ -102,4 +108,7 @@ class Manager {
     const char *deviceName;
     uint32_t instanceNumber;
 
+    // Serial number unique to device
+    void read_serial_num();
+    char serial_num[32 + 1];
 };

@@ -8,6 +8,7 @@
 Manager::Manager(const char *devName, uint32_t instanceNum)
     : deviceName(devName), instanceNumber(instanceNum) {
     numRegisteredModules = 0;
+    read_serial_num();
 }
 
 
@@ -88,6 +89,24 @@ void Manager::power_up() {
     LOG("*** Powering Up ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_up();
+    }
+}
+
+
+void Manager::read_serial_num() {
+    /* Serial numbers are made up of four words located at these specific
+     * registers (see datasheet section 9.3.3) */
+    uint32_t sn_words[4];
+    sn_words[0] = *(volatile uint32_t *)(0x0080A00C);
+    sn_words[1] = *(volatile uint32_t *)(0x0080A040);
+    sn_words[2] = *(volatile uint32_t *)(0x0080A044);
+    sn_words[3] = *(volatile uint32_t *)(0x0080A048);
+
+    // Take these raw values and convert them into a string of hex characters
+    ptrdiff_t word_offset = 0;
+    for (int i = 0; i < 4; i++) {
+        snprintf(serial_num + word_offset, 8 + 1, "%08lX", sn_words[i]);
+        word_offset += 8;
     }
 }
 
