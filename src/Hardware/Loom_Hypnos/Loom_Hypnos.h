@@ -18,15 +18,30 @@
 #define RAIL_5V_OFF LOW
 
 /**
- * Enum to represent all power rail configurations
- *
- * Use bit 1 to store 3V state and bit 0 for 5V for convenience.
+ * Struct to represent power rail states
  */
-enum PowerrailConfig {
-    PR_3V_ON_5V_ON   = (RAIL_3V_ON  << 1) | RAIL_5V_ON,
-    PR_3V_ON_5V_OFF  = (RAIL_3V_ON  << 1) | RAIL_5V_OFF,
-    PR_3V_OFF_5V_ON  = (RAIL_3V_OFF << 1) | RAIL_5V_ON,
-    PR_3V_OFF_5V_OFF = (RAIL_3V_OFF << 1) | RAIL_5V_OFF,
+struct PowerrailConfig {
+    uint8_t rail_3v: 1;
+    uint8_t rail_5v: 1;
+};
+
+namespace RailState {
+    constexpr struct PowerrailConfig PR_3V_ON_5V_ON = {
+        .rail_3v = RAIL_3V_ON,
+        .rail_5v = RAIL_5V_ON,
+    };
+    constexpr struct PowerrailConfig PR_3V_ON_5V_OFF = {
+        .rail_3v = RAIL_3V_ON,
+        .rail_5v = RAIL_5V_OFF,
+    };
+    constexpr struct PowerrailConfig PR_3V_OFF_5V_ON = {
+        .rail_3v = RAIL_3V_OFF,
+        .rail_5v = RAIL_5V_ON,
+    };
+    constexpr struct PowerrailConfig PR_3V_OFF_5V_OFF = {
+        .rail_3v = RAIL_3V_OFF,
+        .rail_5v = RAIL_5V_OFF,
+    };
 };
 
 /**
@@ -72,7 +87,7 @@ class Loom_Hypnos : public Module{
      * This should not be a problem under normal circumstances.
      *
      * @param config The desired configuration while the device is awake
-     * See enum PowerrailConfig.
+     * See namespace RailState.
      */
     void setWakeConfiguration(PowerrailConfig config) {
         railConfigAwake = config;
@@ -81,7 +96,7 @@ class Loom_Hypnos : public Module{
     /**
      * Set the configuration for the power rails when going to sleep
      * @param config The desired configuration while the device is asleep
-     * See enum PowerrailConfig.
+     * See namespace RailState.
      */
     void setSleepConfiguration(PowerrailConfig config) {
         railConfigAsleep = config;
@@ -120,14 +135,14 @@ class Loom_Hypnos : public Module{
      *
      * @param railConfig Configuration of how 3V and 5V rails should turn on
      * or off
-     * See enum PowerrailConfig.
+     * See namespace RailState.
      */
     void setPowerRails(PowerrailConfig railConfig);
 
     /* Power rail configuration for when the device is awake */
-    PowerrailConfig railConfigAwake = PR_3V_ON_5V_ON;
+    PowerrailConfig railConfigAwake = RailState::PR_3V_ON_5V_ON;
     /* Power rail configuration for the when the device is asleep */
-    PowerrailConfig railConfigAsleep = PR_3V_OFF_5V_OFF;
+    PowerrailConfig railConfigAsleep = RailState::PR_3V_OFF_5V_OFF;
 
     /* Real-Time Clock (RTC) */
 
