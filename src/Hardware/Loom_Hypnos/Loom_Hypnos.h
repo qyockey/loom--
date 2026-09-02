@@ -7,15 +7,18 @@
 #include "Loom_Manager.h"
 #include "Module.h"
 
+/* Pins on the Feather used to control Hypnos features */
 #define PIN_RAIL_3V 5
 #define PIN_RAIL_5V 6
 #define PIN_RTC_ALARM 12
 
-/* Set rail active states depending on transistor type uesd */
+/* Set rail active states depending on transistor type uesd.
+ * The 3V rail uses a P-type CMOS and is therefore is active low, whereas the
+ * 5V rail uses an N-type CMOS and is active high */
 #define RAIL_3V_ON LOW
-#define RAIL_3V_OFF HIGH
+#define RAIL_3V_OFF (!RAIL_3V_ON)
 #define RAIL_5V_ON HIGH
-#define RAIL_5V_OFF LOW
+#define RAIL_5V_OFF (!RAIL_5V_ON)
 
 /**
  * Struct to represent power rail states
@@ -56,8 +59,7 @@ class Loom_Hypnos : public Module{
      * measure() *could* be used to record the current time, but we instead
      * prefer to record it during package.
      * power_down() and power_up() also *could* be implemented, but the logic is
-     * cleaner and easier to understand when all inside sleep()
-     */
+     * cleaner and easier to understand when all inside sleep() */
     void measure() override {};
     void power_up() override {};
     void power_down() override {};

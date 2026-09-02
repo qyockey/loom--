@@ -80,11 +80,10 @@ int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max)
          * buffer */
         while (Serial.available()) {
             char next = Serial.peek();
-            if (next == '\r' || next == '\n') {
-                Serial.read();
-            } else {
+            if (next != '\r' && next != '\n') {
                 break;
             }
+            Serial.read();
         }
 
         int16_t value_16 = (int16_t) value_long;
@@ -93,7 +92,7 @@ int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max)
             || value_16 < min
             || value_16 > max
         ) {
-            Serial.printf("[WARNING] value %d out of range.\n", value_long);
+            Serial.printf("[WARNING] value %ld out of range.\n", value_long);
             continue;
         }
 
@@ -149,6 +148,7 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
      * is driven low by the RTC when it is time to wake up. */
     Serial.printf("Attaching RTC alarm interrupt\n");
     pinMode(PIN_RTC_ALARM, INPUT_PULLUP);
+
     /* Attaching twice, otherwise device won't wake up (not super sure why) */
     LowPower.attachInterruptWakeup(digitalPinToInterrupt(PIN_RTC_ALARM), wakeup, LOW);
     LowPower.attachInterruptWakeup(digitalPinToInterrupt(PIN_RTC_ALARM), wakeup, LOW);
