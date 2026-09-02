@@ -148,9 +148,7 @@ class Loom_Hypnos : public Module{
 
     /* RTC instance */
     RTC_DS3231 RTC_DS;
-
     void initializeRtc();
-    void dateTimePrint(DateTime time, bool newline = true);
 
     /* Prompt user for integer */
     int16_t serialReadInt(const char *prompt, int16_t min, int16_t max);

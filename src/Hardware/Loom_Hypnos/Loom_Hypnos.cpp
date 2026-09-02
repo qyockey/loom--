@@ -21,11 +21,9 @@ void Loom_Hypnos::initialize() {
 void Loom_Hypnos::display_data() {
     Serial.printf(
         "Hypnos:\n"
-        "    Time UTC: "
+        "    Time UTC: %s\n",
+        RTC_DS.now().text()
     );
-
-    DateTime timeNowUtc = RTC_DS.now();
-    dateTimePrint(timeNowUtc);
 }
 
 /* Power Rail Control Functionality */
@@ -59,24 +57,12 @@ void Loom_Hypnos::initializeRtc() {
      * square wave */
     RTC_DS.writeSqwPinMode(DS3231_OFF);
 
-    Serial.printf("DS3231 real-time clock initialized successfully!\n");
-    Serial.printf("UTC time now: ");
-    dateTimePrint(RTC_DS.now());
+    LOG("DS3231 real-time clock initialized successfully!");
+    LOGF("UTC time now: %s", RTC_DS.now().text());
 }
 
 DateTime Loom_Hypnos::getCurrentTimeUtc() {
     return RTC_DS.now();
-}
-
-void Loom_Hypnos::dateTimePrint(DateTime time, bool newline) {
-    /* Formatted as: YYYY-MM-DDTHH:MM:SSZ */
-    Serial.printf("%04u-%02u-%02uT%02u:%02u:%02uZ",
-        time.year(), time.month(), time.day(),
-        time.hour(), time.minute(), time.second()
-    );
-    if (newline) {
-        Serial.write('\n');
-    }
 }
 
 int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max) {
@@ -142,8 +128,7 @@ void Loom_Hypnos::setCustomTime() {
     );
     RTC_DS.adjust(newTimeUtc);
 
-    Serial.printf("Custom time successfully set to: %s");
-    dateTimePrint(RTC_DS.now());
+    Serial.printf("Custom time successfully set to %s", RTC_DS.now().text());
 }
 
 /* Sleep Functionality */
@@ -158,8 +143,7 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
     Serial.printf("Setting RTC alarm\n");
     DateTime timeAlarmUtc = RTC_DS.now() + duration;
     RTC_DS.setAlarm(timeAlarmUtc);
-    Serial.printf("RTC alarm set for ");
-    dateTimePrint(timeAlarmUtc);
+    Serial.printf("RTC alarm set for %s", timeAlarmUtc.text());
 
     /* Set interrupt to monitor RTC alarm pin (#12).  This pin idles high then
      * is driven low by the RTC when it is time to wake up. */
