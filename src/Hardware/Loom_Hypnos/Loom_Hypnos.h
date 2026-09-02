@@ -1,12 +1,11 @@
 #pragma once
 
+#include <Arduino.h>
 #include <OPEnS_RTC.h>
 #include <ArduinoLowPower.h>
 
-#include "Arduino.h"
-#include "Module.h"
-
 #include "Loom_Manager.h"
+#include "Module.h"
 
 #define PIN_RAIL_3V 5
 #define PIN_RAIL_5V 6

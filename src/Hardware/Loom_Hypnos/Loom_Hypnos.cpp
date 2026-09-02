@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #include "Loom_Hypnos.h"
 
 Loom_Hypnos::Loom_Hypnos(Manager& man) : Module() {
@@ -6,6 +8,7 @@ Loom_Hypnos::Loom_Hypnos(Manager& man) : Module() {
     /* Set the rail pins to output mode */
     pinMode(PIN_RAIL_3V, OUTPUT);
     pinMode(PIN_RAIL_5V, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
 
     manInst->registerModule(this);
 }
