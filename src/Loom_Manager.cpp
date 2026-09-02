@@ -2,6 +2,7 @@
 #include <cstdint>
 
 #include "Loom_Manager.h"
+#include "Logger.h"
 
 // Constructor
 Manager::Manager(const char *devName, uint32_t instanceNum)
@@ -13,8 +14,8 @@ Manager::Manager(const char *devName, uint32_t instanceNum)
 // Append module to array
 void Manager::registerModule(Module *module) {
     if (LOOM_MAX_MODULES <= numRegisteredModules) {
-        Serial.printf(
-            "[ERROR] Maximum number of modules exceeded!\n"
+        ERRORF(
+            "Maximum number of modules exceeded!\n"
             "        Increase defined value of LOOM_MAX_MODULES (currently %u)\n"
             "        For example, add this line at the top of your sketch\n"
             "\n"
@@ -51,7 +52,7 @@ void Manager::beginSerial() {
 
 // Initialize all modules
 void Manager::initialize() {
-    Serial.printf("*** Initializing ***\n");
+    LOG("*** Initializing ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->initialize();
     }
@@ -60,7 +61,7 @@ void Manager::initialize() {
 
 // Measure data from all modules
 void Manager::measure() {
-    Serial.printf("*** Measuring ***\n");
+    LOG("*** Measuring ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->measure();
     }
@@ -76,7 +77,7 @@ void Manager::display_data() {
 
 
 void Manager::power_down() {
-    Serial.printf("*** Powering Down ***\n");
+    LOG("*** Powering Down ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_down();
     }
@@ -84,7 +85,7 @@ void Manager::power_down() {
 
 
 void Manager::power_up() {
-    Serial.printf("*** Powering Up ***\n");
+    LOG("*** Powering Up ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_up();
     }

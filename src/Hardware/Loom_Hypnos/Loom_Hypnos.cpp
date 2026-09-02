@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "Loom_Hypnos.h"
+#include "Logger.h"
 
 Loom_Hypnos::Loom_Hypnos(Manager& man, HypnosVersion version) : Module() {
     manInst = &man;
@@ -21,6 +22,7 @@ void Loom_Hypnos::initialize() {
     setPowerRails(railConfigAwake);
     initializeRtc();
     sdMan->initialize();
+    Logger::initialize(sdMan, this);
 }
 
 void Loom_Hypnos::display_data() {
@@ -41,17 +43,17 @@ void Loom_Hypnos::setPowerRails(struct PowerrailConfig railConfig) {
 /* RTC */
 
 void Loom_Hypnos::initializeRtc() {
-    Serial.printf("Initializing RTC DS3231...\n");
+    LOG("Initializing RTC DS3231...");
 
     if (!RTC_DS.begin()) {
-        Serial.printf("[ERROR] Couldn't start RTC!\n");
+        ERROR("Couldn't start RTC!");
         return;
     }
 
     /* If RTC loses power, set time manually unless the unit is deployed in the
      * field with no serial interface */
     if (RTC_DS.lostPower() && Serial) {
-        Serial.printf("RTC lost power, set the time\n");
+        LOG("RTC lost power, set the time");
         setCustomTime();
     }
 
@@ -108,13 +110,10 @@ int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max)
 
 void Loom_Hypnos::setCustomTime() {
     /* Print call is broken up, otherwise last line is mysteriously truncated */
-    Serial.printf(
+    LOGF(
         "\n"
         "############################\n"
         "# Use UTC time, not local! #\n"
-    );
-    delay(1);
-    Serial.printf(
         "############################\n"
         "\n"
     );
@@ -132,7 +131,7 @@ void Loom_Hypnos::setCustomTime() {
     );
     RTC_DS.adjust(newTimeUtc);
 
-    Serial.printf("Custom time successfully set to %s", RTC_DS.now().text());
+    LOGF("Custom time successfully set to %s", RTC_DS.now().text());
 }
 
 /* Sleep Functionality */
@@ -144,14 +143,14 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
     /* Safeguard: clear alarms if any have somehow activated */
     RTC_DS.clearAlarm();
 
-    Serial.printf("Setting RTC alarm\n");
+    LOG("Setting RTC alarm");
     DateTime timeAlarmUtc = RTC_DS.now() + duration;
     RTC_DS.setAlarm(timeAlarmUtc);
-    Serial.printf("RTC alarm set for %s", timeAlarmUtc.text());
+    LOGF("RTC alarm set for %s", timeAlarmUtc.text());
 
     /* Set interrupt to monitor RTC alarm pin (#12).  This pin idles high then
      * is driven low by the RTC when it is time to wake up. */
-    Serial.printf("Attaching RTC alarm interrupt\n");
+    LOG("Attaching RTC alarm interrupt");
     pinMode(PIN_RTC_ALARM, INPUT_PULLUP);
 
     /* Attaching twice, otherwise device won't wake up (not super sure why) */
@@ -159,7 +158,7 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
     LowPower.attachInterruptWakeup(digitalPinToInterrupt(PIN_RTC_ALARM), wakeup, LOW);
 
     /* Allow time for message to get through before Serial bus loses power */
-    Serial.printf("Entering standby sleep\n");
+    LOG("Entering standby sleep");
     delay(50);
 
     /* Cut power */
@@ -184,7 +183,7 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
 
     /* Allow time for Serial connection to establish with computer */
     delay(1000);
-    Serial.printf("Waking from sleep\n");
+    LOG("Waking from sleep");
 
     /* Re-initialize all modules */
     manInst->power_up();

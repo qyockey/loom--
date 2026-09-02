@@ -1,4 +1,5 @@
 #include "Loom_Analog.h"
+#include "Logger.h"
 
 Loom_Analog::Loom_Analog(Manager &man) : Module() {
     /* Register the module with the manager */
@@ -20,8 +21,8 @@ void Loom_Analog::initialize() {
 
 void Loom_Analog::addMeasuredPin(uint8_t pin) {
     if (pin >= MAX_ANALOG_PINS) {
-        Serial.printf(
-            "[ERROR] Cannot measure analog pin %u, max is %u\n",
+        ERRORF(
+            "Cannot measure analog pin %u, max is %u\n",
             pin, MAX_ANALOG_PINS - 1
         );
     }
