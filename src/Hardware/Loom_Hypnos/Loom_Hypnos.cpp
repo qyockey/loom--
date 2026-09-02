@@ -175,14 +175,13 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
     digitalWrite(LED_BUILTIN, HIGH);
     setPowerRails(railConfigAwake);
     USBDevice.attach();
-    manInst->beginSerial();
 
     /* Acknowledge RTC alarm.  The RTC will deassert its alarm so that the
      * interrupt pin returns high to an idle state. */
     RTC_DS.clearAlarm();
 
     /* Allow time for Serial connection to establish with computer */
-    delay(1000);
+    manInst->beginSerial(1000);
     LOG("Waking from sleep");
 
     /* Re-initialize all modules */

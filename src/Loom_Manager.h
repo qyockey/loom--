@@ -15,8 +15,8 @@
 #endif
 
 // Wait up to 20s for Serial
-#ifndef LOOM_SERIAL_WAIT_MS
-#define LOOM_SERIAL_WAIT_MS 20000U
+#ifndef LOOM_SERIAL_TIMEOUT_MS
+#define LOOM_SERIAL_TIMEOUT_MS 20000U
 #endif
 
 /**
@@ -42,11 +42,12 @@ class Manager {
     void registerModule(Module *module);
 
     /**
-     * Start the serial interface.  Abort if the operation exceeds
-     * LOOM_SERIAL_WAIT_MS so that field deployments don't hang while waiting
-     * for a serial connection.
+     * Start the serial interface.  Abort if the operation exceeds waitDuration
+     * (in ms) so that field deployments don't hang while waiting for a serial
+     * connection.
+     * @param timeoutMillis Maximum time to wait in milliseconds
      */
-    void beginSerial();
+    void beginSerial(uint64_t timeoutMillis = LOOM_SERIAL_WAIT_MS);
 
     /**
      * Calls the initialization function on all added modules
