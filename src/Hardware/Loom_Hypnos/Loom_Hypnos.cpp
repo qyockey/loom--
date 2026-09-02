@@ -15,7 +15,7 @@ Loom_Hypnos::Loom_Hypnos(Manager& man) : Module() {
 
 void Loom_Hypnos::initialize() {
     setPowerRails(railConfigAwake);
-    initializeRTC();
+    initializeRtc();
 }
 
 void Loom_Hypnos::display_data() {
@@ -48,7 +48,7 @@ void Loom_Hypnos::setPowerRails(PowerrailConfig railConfig) {
 
 /* RTC */
 
-void Loom_Hypnos::initializeRTC() {
+void Loom_Hypnos::initializeRtc() {
     Serial.printf("Initializing RTC DS3231...\n");
 
     if (!RTC_DS.begin()) {

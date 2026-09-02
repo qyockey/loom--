@@ -134,7 +134,7 @@ class Loom_Hypnos : public Module{
     /* RTC instance */
     RTC_DS3231 RTC_DS;
 
-    void initializeRTC();
+    void initializeRtc();
     void dateTimePrint(DateTime time, bool newline = true);
 
     /* Prompt user for integer */
