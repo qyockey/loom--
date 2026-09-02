@@ -4,7 +4,8 @@
 #include "Loom_Manager.h"
 
 // Constructor
-Manager::Manager() {
+Manager::Manager(const char *devName, uint32_t instanceNum)
+    : deviceName(devName), instanceNumber(instanceNum) {
     numRegisteredModules = 0;
 }
 

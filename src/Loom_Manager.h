@@ -29,8 +29,10 @@ class Manager {
   public:
     /**
      * Constructs a new Manager
+     * @param devName Device name to provided for logging purposes
+     * @param instanceNum Instance number for logging purposes
      */
-    Manager();
+    Manager(const char *devName, uint32_t instanceNum);
 
     /**
      * Registers a new sub-module to be controlled by the manager (Used on sensors so measure and
@@ -72,6 +74,18 @@ class Manager {
     void power_up();
 
     /**
+     * Gets the current device name set by the user
+     * @return current device name
+     */
+    const char *get_device_name() { return deviceName; };
+
+    /**
+     * Gets the current device instance number
+     * @return current device instance number
+     */
+    int get_instance_num() { return instanceNumber; };
+
+    /**
      * Pause execution for a specified length of time
      * @param ms Time to wait for in milliseconds
      */
@@ -80,5 +94,12 @@ class Manager {
   private:
     // List of modules that have been added to the stack
     Module *modules[LOOM_MAX_MODULES];
+
+    // Number of modules registered for measurement
     uint8_t numRegisteredModules;
+
+    // Name and instance of the device
+    const char *deviceName;
+    uint32_t instanceNumber;
+
 };

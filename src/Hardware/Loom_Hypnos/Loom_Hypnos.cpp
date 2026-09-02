@@ -2,7 +2,7 @@
 
 #include "Loom_Hypnos.h"
 
-Loom_Hypnos::Loom_Hypnos(Manager& man) : Module() {
+Loom_Hypnos::Loom_Hypnos(Manager& man, HypnosVersion version) : Module() {
     manInst = &man;
 
     /* Set the rail pins to output mode */
@@ -10,12 +10,17 @@ Loom_Hypnos::Loom_Hypnos(Manager& man) : Module() {
     pinMode(PIN_RAIL_5V, OUTPUT);
     pinMode(LED_BUILTIN, OUTPUT);
 
+    /* Create SD card manager */
+    sdChipSelect = (uint8_t) version;
+    sdMan = new SdManager(sdChipSelect, man.get_device_name());
+
     manInst->registerModule(this);
 }
 
 void Loom_Hypnos::initialize() {
     setPowerRails(railConfigAwake);
     initializeRtc();
+    sdMan->initialize();
 }
 
 void Loom_Hypnos::display_data() {

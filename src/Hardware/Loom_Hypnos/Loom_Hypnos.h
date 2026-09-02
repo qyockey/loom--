@@ -6,6 +6,7 @@
 
 #include "Loom_Manager.h"
 #include "Module.h"
+#include "SdManager.h"
 
 /* Pins on the Feather used to control Hypnos features */
 #define PIN_RAIL_3V 5
@@ -48,6 +49,12 @@ namespace RailState {
 };
 
 /**
+ * Tracks the hypnos version and matches the version with the correct chip
+ * select pin
+ */
+enum HypnosVersion { V3_2 = 10U, V3_3 = 11U, ADALOGGER = 4U };
+
+/**
  * Controls RTC, 3.3V/5V power rails, and SD card on the Hypnos board.
  *
  * The hypnos is treated as a module because the RTC time is a measured quantity
@@ -75,8 +82,10 @@ class Loom_Hypnos : public Module{
     /**
      * Constructs a new Hypnos instance and registers it with the manager
      * @param man Reference to the manager
+     * @param version The version of the Hypnos in use, this changes which pin
+     * is used as SD chip select
      */
-    Loom_Hypnos(Manager& man);
+    Loom_Hypnos(Manager& man, HypnosVersion version);
 
     /* Power Control Functionality */
 
@@ -125,7 +134,9 @@ class Loom_Hypnos : public Module{
 
   private:
 
-    Manager* manInst = nullptr;
+    Manager *manInst = nullptr;
+    SdManager *sdMan = nullptr;
+    uint8_t sdChipSelect;
 
     /* Power rails */
 
