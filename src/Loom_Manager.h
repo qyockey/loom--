@@ -47,7 +47,7 @@ class Manager {
      * connection.
      * @param timeoutMillis Maximum time to wait in milliseconds
      */
-    void beginSerial(uint64_t timeoutMillis = LOOM_SERIAL_WAIT_MS);
+    void beginSerial(uint64_t timeoutMillis = LOOM_SERIAL_TIMEOUT_MS);
 
     /**
      * Calls the initialization function on all added modules
