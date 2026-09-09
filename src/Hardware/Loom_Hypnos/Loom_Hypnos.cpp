@@ -3,6 +3,8 @@
 #include "Loom_Hypnos.h"
 #include "Logger.h"
 
+volatile bool Loom_Hypnos::shouldPowerUp = false;
+
 Loom_Hypnos::Loom_Hypnos(Manager& man, HypnosVersion version) : Module() {
     manInst = &man;
 
@@ -168,8 +170,13 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
     digitalWrite(LED_BUILTIN, LOW);
 
     /* Enter low-power consumption deep-sleep state.
-     * Microcontroller will do nothing until the RTC alarm triggers. */
-    LowPower.sleep();
+     * Microcontroller will do nothing until the RTC alarm triggers.
+     * Use boolean shouldPowerUp to differentieate RTC alarm from any other
+     * interrupt. */
+    shouldPowerUp = false;
+    do {
+        LowPower.sleep();
+    } while (shouldPowerUp == false);
 
     /* Restore power */
     digitalWrite(LED_BUILTIN, HIGH);
@@ -190,8 +197,12 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
 
 void Loom_Hypnos::wakeup() {
     /* Detach the interrupt immediately so it doesn't trigger again.
-     * Otherwise this function gets called over and over in an infinite loop.
-     * After returning, control flow moves to the line just after
-     * the call to LowPower.sleep() where we start restoring power. */
-    detachInterrupt(digitalPinToInterrupt(PIN_RTC_ALARM));
+     * Otherwise the interrupt service routine gets called over and over in an
+     * infinite loop. */
+    detachInterrupt(PIN_RTC_ALARM);
+
+    /* Use boolean shouldPowerUp to record that the interrupt received was
+     * indeed the RTC alarm. After returning, control flow moves to the line
+     * just after the call to LowPower.sleep(). */
+    shouldPowerUp = true;
 }

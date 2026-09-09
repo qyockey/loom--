@@ -173,7 +173,7 @@ class Loom_Hypnos : public Module{
     void setCustomTime();
 
     /* Sleep functionality */
-    static void wakeup();
     void setWakeupAlarm(DateTime timeAlarmUtc);
+    static void wakeup();
+    static volatile bool shouldPowerUp;
 };
-
