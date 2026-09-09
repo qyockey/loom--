@@ -9,9 +9,9 @@
 #include "SdManager.h"
 
 /* Pins on the Feather used to control Hypnos features */
-#define PIN_RAIL_3V 5
-#define PIN_RAIL_5V 6
-#define PIN_RTC_ALARM 12
+#define PIN_RAIL_3V 5U
+#define PIN_RAIL_5V 6U
+#define PIN_RTC_ALARM 12U
 
 /* Set rail active states depending on transistor type uesd.
  * The 3V rail uses a P-type CMOS and is therefore is active low, whereas the
