@@ -11,8 +11,8 @@ SdManager::SdManager(uint8_t pinChipSelect, const char *deviceName)
 bool SdManager::initialize() {
     Serial.println("Initializing SD Card...");
 
-    /* Start the SD card with the fastest SPI speed */
-    if (!sd.begin(pinChipSelect, SD_SCK_MHZ(50))) {
+    /* Start the SD card with a slow SPI speed */
+    if (!sd.begin(pinChipSelect, SD_SCK_MHZ(4))) {
         Serial.println(
             "Failed to Initialize SD Card! SD Card functionality will be "
             "disabled, is there an SD card inserted into the device?"
