@@ -154,19 +154,18 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
     RTC_DS.setAlarm(timeAlarmUtc);
     LOGF("RTC alarm set for %s", timeAlarmUtc.text());
 
-    /* Set interrupt to monitor RTC alarm pin (#12).  This pin idles high then
-     * is driven low by the RTC when it is time to wake up. */
-    LOG("Attaching RTC alarm interrupt");
+    /* Safeguard: clear interrupt pending flag before enabling interrupt */
+    EIC->INTFLAG.bit.EXTINT3 = 1;
 
-    /* Attaching twice, otherwise device won't wake up (not super sure why) */
-    LowPower.attachInterruptWakeup(digitalPinToInterrupt(PIN_RTC_ALARM), wakeup, LOW);
-    LowPower.attachInterruptWakeup(digitalPinToInterrupt(PIN_RTC_ALARM), wakeup, LOW);
+    /* Set interrupt to monitor RTC alarm pin (#12). */
+    LOG("Attaching RTC alarm interrupt");
+    LowPower.attachInterruptWakeup(PIN_RTC_ALARM, wakeup, LOW);
 
     /* Allow time for message to get through before Serial bus loses power */
     LOG("Entering standby sleep");
     delay(50);
 
-    /* Cut power */
+    /* Cut power to peripherals */
     Serial.end();
     USBDevice.detach();
     setPowerRails(railConfigAsleep);
@@ -189,6 +188,9 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
     /* Acknowledge RTC alarm.  The RTC will deassert its alarm so that the
      * interrupt pin returns high to an idle state. */
     RTC_DS.clearAlarm();
+
+    /* Explicitly clear interrupt pending flag after RTC alarm is cleared */
+    EIC->INTFLAG.bit.EXTINT3 = 1;
 
     /* Allow time for Serial connection to establish with computer */
     manInst->beginSerial(1000);
