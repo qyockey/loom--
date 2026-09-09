@@ -8,11 +8,6 @@ volatile bool Loom_Hypnos::shouldPowerUp = false;
 Loom_Hypnos::Loom_Hypnos(Manager& man, HypnosVersion version) : Module() {
     manInst = &man;
 
-    /* Set the rail pins to output mode */
-    pinMode(PIN_RAIL_3V, OUTPUT);
-    pinMode(PIN_RAIL_5V, OUTPUT);
-    pinMode(LED_BUILTIN, OUTPUT);
-
     /* Create SD card manager */
     sdChipSelect = (uint8_t) version;
     sdMan = new SdManager(sdChipSelect, man.get_device_name());
@@ -21,6 +16,15 @@ Loom_Hypnos::Loom_Hypnos(Manager& man, HypnosVersion version) : Module() {
 }
 
 void Loom_Hypnos::initialize() {
+    /* Set the rail pins to output mode */
+    pinMode(PIN_RAIL_3V, OUTPUT);
+    pinMode(PIN_RAIL_5V, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
+
+    /* Monitor RTC alarm pin using input configured with internal pull-up
+     * resistor enabled */
+    pinMode(PIN_RTC_ALARM, INPUT_PULLUP);
+
     setPowerRails(railConfigAwake);
     initializeRtc();
     sdMan->initialize();
@@ -153,7 +157,6 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
     /* Set interrupt to monitor RTC alarm pin (#12).  This pin idles high then
      * is driven low by the RTC when it is time to wake up. */
     LOG("Attaching RTC alarm interrupt");
-    pinMode(PIN_RTC_ALARM, INPUT_PULLUP);
 
     /* Attaching twice, otherwise device won't wake up (not super sure why) */
     LowPower.attachInterruptWakeup(digitalPinToInterrupt(PIN_RTC_ALARM), wakeup, LOW);
