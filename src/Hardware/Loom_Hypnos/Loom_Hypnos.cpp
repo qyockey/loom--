@@ -33,11 +33,18 @@ void Loom_Hypnos::initialize() {
     Logger::initialize(sdMan, this);
 }
 
+void Loom_Hypnos::measure() {
+    strncpy(timestamp->timeUtc, RTC_DS.now().text(), 21);
+    timestamp->timeUtc[10] = 'T';
+    timestamp->timeUtc[19] = 'Z';
+}
+
 void Loom_Hypnos::display_data() {
     Serial.printf(
         "Hypnos:\n"
-        "    Time UTC: %s\n",
-        RTC_DS.now().text()
+        "    Time UTC: %s\n"
+        "\n",
+        timestamp->timeUtc
     );
 }
 

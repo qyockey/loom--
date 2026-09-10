@@ -63,20 +63,22 @@ enum HypnosVersion { V3_2 = 10U, V3_3 = 11U, ADALOGGER = 4U };
  *
  * The hypnos is treated as a module because the RTC time is a measured quantity
  */
-class Loom_Hypnos : public Module{
+class Loom_Hypnos : public Module {
   protected:
 
     /* These aren't used with the Hypnos.
      * power_down() and power_up() also *could* be implemented, but the logic is
      * cleaner and easier to understand when all inside sleep() */
-    void measure() override {};
     void power_up() override {};
     void power_down() override {};
 
     /* Initialize power rails and RTC */
     void initialize() override;
 
-    /* Display current time in UTC */
+    /* Measure current time in UTC */
+    void measure() override;
+
+    /* Display measured time in UTC */
     void display_data() override;
 
     /**
