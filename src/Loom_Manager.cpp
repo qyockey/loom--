@@ -45,6 +45,7 @@ void Manager::beginSerial(uint64_t timeoutMillis) {
         digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
         delay(100);
     }
+    digitalWrite(LED_BUILTIN, HIGH);
 }
 
 
