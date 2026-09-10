@@ -33,12 +33,10 @@ class Manager {
      * Constructs a new Manager
      * @param devName Device name to provided for logging purposes
      * @param instanceNum Instance number for logging purposes
-     * @param hypnosInst Optional instance of hypnos used for sleep
      */
     Manager(
         const char *devName,
-        uint32_t instanceNum,
-        Loom_Hypnos *hypnosInst = nullptr
+        uint32_t instanceNum
     );
 
     /**
@@ -76,12 +74,12 @@ class Manager {
      * an interrupt to wake it up and pull it out of sleep.
      * This is much more power efficient for long delays than calling
      * manager.pause()
-     * @param duration The time that will elapse before the device is woken by
+     * @param millis The time that will elapse before the device is woken by
      * the RTC
      * @param waitForSerial Whether to still execution until Serial monitor
      * reconnects after powering up.  This takes about 2 seconds.
      */
-    void sleep(TimeSpan duration, bool waitForSerial = false);
+    void sleep(uint32_t millis, bool waitForSerial = false);
 
     /**
      * Gets the current device name set by the user

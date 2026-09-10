@@ -3,8 +3,6 @@
 #include "Loom_Hypnos.h"
 #include "Logger.h"
 
-volatile bool Loom_Hypnos::shouldPowerUp = false;
-
 Loom_Hypnos::Loom_Hypnos(
     struct TimestampData *timestamp,
     HypnosVersion version,
@@ -21,11 +19,6 @@ void Loom_Hypnos::initialize() {
     /* Set the rail pins to output mode */
     pinMode(PIN_RAIL_3V, OUTPUT);
     pinMode(PIN_RAIL_5V, OUTPUT);
-    pinMode(LED_BUILTIN, OUTPUT);
-
-    /* Monitor RTC alarm pin using input configured with internal pull-up
-     * resistor enabled */
-    pinMode(PIN_RTC_ALARM, INPUT_PULLUP);
 
     setPowerRails(railConfigAwake);
     initializeRtc();
@@ -55,6 +48,14 @@ void Loom_Hypnos::setPowerRails(struct PowerrailConfig railConfig) {
     digitalWrite(PIN_RAIL_5V, railConfig.rail_5v);
 }
 
+void Loom_Hypnos::power_down() {
+    setPowerRails(railConfigAsleep);
+}
+
+void Loom_Hypnos::power_up() {
+    setPowerRails(railConfigAwake);
+}
+
 /* RTC */
 
 void Loom_Hypnos::initializeRtc() {
@@ -71,13 +72,6 @@ void Loom_Hypnos::initializeRtc() {
         LOG("RTC lost power, set the time");
         setCustomTime();
     }
-
-    /* Clear any pending alarms */
-    RTC_DS.clearAlarm();
-
-    /* Configure INT/SQW output pin to give active-low interrupt instead of
-     * square wave */
-    RTC_DS.writeSqwPinMode(DS3231_OFF);
 
     LOG("DS3231 real-time clock initialized successfully!");
     LOGF("UTC time now: %s", RTC_DS.now().text());
@@ -149,64 +143,4 @@ void Loom_Hypnos::setCustomTime() {
     LOGF("Custom time successfully set to %s", RTC_DS.now().text());
 }
 
-/* Sleep Functionality */
-
-void Loom_Hypnos::sleep(TimeSpan duration) {
-    /* Safeguard: clear alarms if any have somehow activated */
-    RTC_DS.clearAlarm();
-
-    LOG("Setting RTC alarm");
-    DateTime timeAlarmUtc = RTC_DS.now() + duration;
-    RTC_DS.setAlarm(timeAlarmUtc);
-    LOGF("RTC alarm set for %s", timeAlarmUtc.text());
-
-    /* Safeguard: clear interrupt pending flag before enabling interrupt */
-    EIC->INTFLAG.bit.EXTINT3 = 1;
-
-    /* Set interrupt to monitor RTC alarm pin (#12). */
-    LOG("Attaching RTC alarm interrupt");
-    LowPower.attachInterruptWakeup(PIN_RTC_ALARM, wakeup, LOW);
-
-    /* Allow time for message to get through before Serial bus loses power */
-    LOG("Entering standby sleep");
-    delay(50);
-
-    /* Cut power to peripherals */
-    Serial.end();
-    USBDevice.detach();
-    setPowerRails(railConfigAsleep);
-    digitalWrite(LED_BUILTIN, LOW);
-
-    /* Enter low-power consumption deep-sleep state.
-     * Microcontroller will do nothing until the RTC alarm triggers.
-     * Use boolean shouldPowerUp to differentieate RTC alarm from any other
-     * interrupt. */
-    shouldPowerUp = false;
-    do {
-        LowPower.sleep();
-    } while (shouldPowerUp == false);
-
-    /* Restore power */
-    digitalWrite(LED_BUILTIN, HIGH);
-    setPowerRails(railConfigAwake);
-    USBDevice.attach();
-
-    /* Acknowledge RTC alarm.  The RTC will deassert its alarm so that the
-     * interrupt pin returns high to an idle state. */
-    RTC_DS.clearAlarm();
-
-    /* Explicitly clear interrupt pending flag after RTC alarm is cleared */
-    EIC->INTFLAG.bit.EXTINT3 = 1;
-}
-
-void Loom_Hypnos::wakeup() {
-    /* Detach the interrupt immediately so it doesn't trigger again.
-     * Otherwise the interrupt service routine gets called over and over in an
-     * infinite loop. */
-    detachInterrupt(PIN_RTC_ALARM);
-
-    /* Use boolean shouldPowerUp to record that the interrupt received was
-     * indeed the RTC alarm. After returning, control flow moves to the line
-     * just after the call to LowPower.sleep(). */
-    shouldPowerUp = true;
 }

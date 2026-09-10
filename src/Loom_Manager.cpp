@@ -7,11 +7,13 @@
 // Constructor
 Manager::Manager(
     const char *devName,
-    uint32_t instanceNum,
-    Loom_Hypnos *hypnosInst
-) : deviceName(devName), instanceNumber(instanceNum), hypnosInst(hypnosInst) {
+    uint32_t instanceNum
+) : deviceName(devName), instanceNumber(instanceNum) {
     numRegisteredModules = 0;
     read_serial_num();
+
+    pinMode(LED_BUILTIN, OUTPUT);
+    digitalWrite(LED_BUILTIN, HIGH);
 }
 
 
@@ -75,27 +77,7 @@ void Manager::display_data() {
 }
 
 
-void Manager::sleep(TimeSpan duration, bool waitForSerial) {
-    if (hypnosInst == nullptr) {
-        pause(duration.totalseconds() * 1000);
-        return;
-    }
-
-    power_down();
-
-    hypnosInst->sleep(duration);
-
-    /* Allow time for Serial connection to establish with computer */
-    uint64_t serialTimeout = waitForSerial ? 2000 : 0;
-    beginSerial(serialTimeout);
-    LOG("Waking from sleep");
-
-    power_up();
-}
-
-
 void Manager::power_down() {
-    LOG("*** Powering Down ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_down();
     }
@@ -103,10 +85,39 @@ void Manager::power_down() {
 
 
 void Manager::power_up() {
-    LOG("*** Powering Up ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->power_up();
     }
+}
+
+
+void Manager::sleep(uint32_t millis, bool waitForSerial) {
+    /* Allow time for message to get through before Serial bus loses power */
+    LOG("Entering standby sleep");
+    delay(50);
+
+    Serial.end();
+
+    /* Prepare peripherals for sleep and set power rails to sleep
+     * configuration */
+    power_down();
+
+    /* Enter low-power consumption deep-sleep state.
+     * Microcontroller will do nothing until the alarm triggers. */
+    digitalWrite(LED_BUILTIN, LOW);
+    LowPower.sleep(millis);
+    digitalWrite(LED_BUILTIN, HIGH);
+
+    /* Wake peripherals from sleep and set power rails to awake
+     * configuration. */
+    power_up();
+
+    SLOG("Waking from sleep");
+
+    /* Allow time for Serial connection to establish with computer */
+    uint64_t serialTimeout = waitForSerial ? 3000 : 0;
+    beginSerial(serialTimeout);
+    LOG("Serial monitor reattached");
 }
 
 

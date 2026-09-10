@@ -66,11 +66,8 @@ enum HypnosVersion { V3_2 = 10U, V3_3 = 11U, ADALOGGER = 4U };
 class Loom_Hypnos : public Module {
   protected:
 
-    /* These aren't used with the Hypnos.
-     * power_down() and power_up() also *could* be implemented, but the logic is
-     * cleaner and easier to understand when all inside sleep() */
-    void power_up() override {};
-    void power_down() override {};
+    void power_up() override;
+    void power_down() override;
 
     /* Initialize power rails and RTC */
     void initialize() override;
@@ -80,17 +77,6 @@ class Loom_Hypnos : public Module {
 
     /* Display measured time in UTC */
     void display_data() override;
-
-    /**
-     * Drops the Feather M0 and Hypnos board into a low power sleep waiting for
-     * an interrupt to wake it up and pull it out of sleep.
-     * This is much more power efficient for long delays than calling
-     * manager.pause()
-     * @param duration The time that will elapse before the device is woken by
-     * the RTC
-     */
-    void sleep(TimeSpan duration);
-    friend class Manager;
 
   public:
 
@@ -179,9 +165,4 @@ class Loom_Hypnos : public Module {
      * This function is only automatically called
      */
     void setCustomTime();
-
-    /* Sleep functionality */
-    void setWakeupAlarm(DateTime timeAlarmUtc);
-    static void wakeup();
-    static volatile bool shouldPowerUp;
 };
