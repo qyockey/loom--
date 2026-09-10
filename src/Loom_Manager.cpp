@@ -16,7 +16,7 @@ Manager::Manager(
 
 
 // Append module to array
-void Manager::registerModule(Module *module) {
+void Manager::registerModule(Module *moduleInst) {
     if (LOOM_MAX_MODULES <= numRegisteredModules) {
         ERRORF(
             "Maximum number of modules exceeded!\n"
@@ -30,7 +30,7 @@ void Manager::registerModule(Module *module) {
         return;
     }
 
-    modules[numRegisteredModules] = module;
+    modules[numRegisteredModules] = moduleInst;
     numRegisteredModules++;
 }
 

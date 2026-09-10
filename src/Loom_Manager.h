@@ -44,9 +44,9 @@ class Manager {
     /**
      * Registers a new sub-module to be controlled by the manager (Used on sensors so measure and
      * package calls can all be called at once)
-     * @param module Pointer to a class the inherits from Module that we want to add
+     * @param moduleInst Pointer to an object that inherits from Module that we want to add
      */
-    void registerModule(Module *module);
+    void registerModule(Module *moduleInst);
 
     /**
      * Start the serial interface.  Abort if the operation exceeds waitDuration
