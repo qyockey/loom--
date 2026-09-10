@@ -10,7 +10,6 @@
 #define ADC_VREF 3.3F
 
 struct AnalogPinData {
-    enum ModuleTag tag = MODULE_ANALOG;
     uint8_t number;
     uint16_t analogCode : ADC_RESOLUTION_BITS;
     uint16_t mv;

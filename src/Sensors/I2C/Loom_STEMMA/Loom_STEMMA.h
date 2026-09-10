@@ -6,7 +6,6 @@
 #include "Module.h"
 
 struct StemmaData {
-    enum ModuleTag tag = MODULE_STEMMA;
     uint8_t temperatureC;
     uint16_t capacitive;
 };

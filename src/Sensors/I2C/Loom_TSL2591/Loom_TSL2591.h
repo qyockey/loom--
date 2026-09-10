@@ -6,7 +6,6 @@
 #include "Module.h"
 
 struct TSL2591Data {
-    enum ModuleTag tag = MODULE_TSL2591;
     uint16_t visible;
     uint16_t infrared;
     uint16_t fullSpectrum;

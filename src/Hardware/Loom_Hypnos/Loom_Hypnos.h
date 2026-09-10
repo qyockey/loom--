@@ -21,7 +21,6 @@
 #define RAIL_5V_OFF (!RAIL_5V_ON)
 
 struct TimestampData {
-    enum ModuleTag tag = MODULE_RTC;
     char timeUtc[21];
 };
 

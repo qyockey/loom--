@@ -7,7 +7,6 @@
 #include "Module.h"
 
 struct AS7265XData {
-    enum ModuleTag tag = MODULE_AS7265X;
     uint16_t uv[6];    // Measured UV bands values. Units: counts / (μW/cm^2)
     uint16_t color[6]; // Measured color bands values. Units: counts / (μW/cm^2)
     uint16_t nir[6];   // Measured near-infra-red bands values. Units: counts / (μW/cm^2)

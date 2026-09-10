@@ -5,7 +5,6 @@
 #include "Module.h"
 
 struct DigitalPinData {
-    enum ModuleTag tag = MODULE_DIGITAL;
     uint8_t number;
     bool state;
 };
