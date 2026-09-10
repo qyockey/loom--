@@ -148,13 +148,13 @@ class Loom_Hypnos : public Module {
 
     /* Power rail configuration for when the device is awake */
     PowerrailConfig railConfigAwake = RailState::PR_3V_ON_5V_ON;
+
     /* Power rail configuration for the when the device is asleep */
     PowerrailConfig railConfigAsleep = RailState::PR_3V_OFF_5V_OFF;
 
     /* Real-Time Clock (RTC) */
 
-    /* RTC instance */
-    RTC_DS3231 RTC_DS;
+    RTC_DS3231 rtcExternal;
     void initializeRtc();
 
     /* Prompt user for integer */

@@ -27,7 +27,7 @@ void Loom_Hypnos::initialize() {
 }
 
 void Loom_Hypnos::measure() {
-    strncpy(timestamp->timeUtc, RTC_DS.now().text(), 21);
+    strncpy(timestamp->timeUtc, rtcExternal.now().text(), 21);
     timestamp->timeUtc[10] = 'T';
     timestamp->timeUtc[19] = 'Z';
 }
@@ -61,24 +61,24 @@ void Loom_Hypnos::power_up() {
 void Loom_Hypnos::initializeRtc() {
     LOG("Initializing RTC DS3231...");
 
-    if (!RTC_DS.begin()) {
+    if (!rtcExternal.begin()) {
         ERROR("Couldn't start RTC!");
         return;
     }
 
     /* If RTC loses power, set time manually unless the unit is deployed in the
      * field with no serial interface */
-    if (RTC_DS.lostPower() && Serial) {
+    if (rtcExternal.lostPower() && Serial) {
         LOG("RTC lost power, set the time");
         setCustomTime();
     }
 
     LOG("DS3231 real-time clock initialized successfully!");
-    LOGF("UTC time now: %s", RTC_DS.now().text());
+    LOGF("UTC time now: %s", rtcExternal.now().text());
 }
 
 DateTime Loom_Hypnos::getCurrentTimeUtc() {
-    return RTC_DS.now();
+    return rtcExternal.now();
 }
 
 int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max) {
@@ -138,9 +138,7 @@ void Loom_Hypnos::setCustomTime() {
         computer_year, computer_month, computer_day,
         computer_hour, computer_minute, computer_second
     );
-    RTC_DS.adjust(newTimeUtc);
+    rtcExternal.adjust(newTimeUtc);
 
-    LOGF("Custom time successfully set to %s", RTC_DS.now().text());
-}
-
+    LOGF("Custom time successfully set to %s", rtcExternal.now().text());
 }
