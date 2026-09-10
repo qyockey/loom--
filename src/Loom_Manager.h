@@ -73,7 +73,7 @@ class Manager {
     /**
      * Prints out the current measured data to the Serial bus
      */
-    void display_data();
+    void displayData();
 
     /**
      * Drops the Feather M0 and Hypnos board into a low power sleep waiting for
@@ -91,19 +91,19 @@ class Manager {
      * Gets the current device name set by the user
      * @return current device name
      */
-    const char *get_device_name() { return deviceName; };
+    const char *getDeviceName() { return deviceName; };
 
     /**
      * Gets the current device instance number
      * @return current device instance number
      */
-    int get_instance_num() { return instanceNumber; };
+    int getInstanceNum() { return instanceNumber; };
 
     /**
      * Get the unique serial number of the Feather m0
      * @return Unique serial number
      */
-    const char *get_serial_num() { return serial_num; };
+    const char *getSerialNum() { return serialNum; };
 
     /**
      * Pause execution for a specified length of time
@@ -115,12 +115,12 @@ class Manager {
     /**
      * Clean up modules before cutting power
      */
-    void power_down();
+    void powerDown();
 
     /**
      * Reinitialize modules after power restored
      */
-    void power_up();
+    void powerUp();
 
     struct PacketData *packet;
 
@@ -136,6 +136,6 @@ class Manager {
     Loom_Hypnos *hypnosInst = nullptr;
 
     // Serial number unique to device
-    void read_serial_num();
-    char serial_num[32 + 1];
+    void readSerialNum();
+    char serialNum[32 + 1];
 };

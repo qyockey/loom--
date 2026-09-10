@@ -16,7 +16,7 @@ void Loom_Random::measure() {
     random->value = rand() % 100;
 }
 
-void Loom_Random::display_data() {
+void Loom_Random::displayData() {
     Serial.printf("Random:\n");
     Serial.printf("    value: %u\n", random->value);
     Serial.printf("\n");

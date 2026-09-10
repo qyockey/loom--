@@ -19,9 +19,9 @@ class Loom_STEMMA : public Module {
   protected:
     void measure() override;
     void initialize() override;
-    void display_data() override;
-    void power_down() override {};
-    void power_up() override {};
+    void displayData() override;
+    void powerDown() override {};
+    void powerUp() override {};
 
   public:
     /**

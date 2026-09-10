@@ -10,7 +10,7 @@ void Loom_Digital::measure() {
     pin->state = digitalRead(pin->number);
 }
 
-void Loom_Digital::display_data() {
+void Loom_Digital::displayData() {
     Serial.printf("Digital:\n");
     Serial.printf("    D%u: %u\n", pin->number, pin->state);
     Serial.printf("\n");

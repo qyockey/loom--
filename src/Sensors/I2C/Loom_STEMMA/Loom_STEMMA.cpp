@@ -22,7 +22,7 @@ void Loom_STEMMA::measure() {
     data->capacitive = stemma.touchRead(0);
 }
 
-void Loom_STEMMA::display_data() {
+void Loom_STEMMA::displayData() {
     if (!initialized) {
         return;
     }

@@ -13,7 +13,7 @@ Manager::Manager(
 ) : deviceName(devName), instanceNumber(instanceNum) {
     numRegisteredModules = 0;
     this->packet = packet;
-    read_serial_num();
+    readSerialNum();
 
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
@@ -74,7 +74,7 @@ void Manager::measure() {
 
 
 // Display data from all modules
-void Manager::display_data() {
+void Manager::displayData() {
     Serial.printf(
         "Packet:\n"
         "    Number: %lu\n"
@@ -83,21 +83,21 @@ void Manager::display_data() {
     );
 
     for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->display_data();
+        modules[i]->displayData();
     }
 }
 
 
-void Manager::power_down() {
+void Manager::powerDown() {
     for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->power_down();
+        modules[i]->powerDown();
     }
 }
 
 
-void Manager::power_up() {
+void Manager::powerUp() {
     for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->power_up();
+        modules[i]->powerUp();
     }
 }
 
@@ -111,7 +111,7 @@ void Manager::sleep(uint32_t millis, bool waitForSerial) {
 
     /* Prepare peripherals for sleep and set power rails to sleep
      * configuration */
-    power_down();
+    powerDown();
 
     /* Enter low-power consumption deep-sleep state.
      * Microcontroller will do nothing until the alarm triggers. */
@@ -121,7 +121,7 @@ void Manager::sleep(uint32_t millis, bool waitForSerial) {
 
     /* Wake peripherals from sleep and set power rails to awake
      * configuration. */
-    power_up();
+    powerUp();
 
     SLOG("Waking from sleep");
 
@@ -132,20 +132,20 @@ void Manager::sleep(uint32_t millis, bool waitForSerial) {
 }
 
 
-void Manager::read_serial_num() {
+void Manager::readSerialNum() {
     /* Serial numbers are made up of four words located at these specific
      * registers (see datasheet section 9.3.3) */
-    uint32_t sn_words[4];
-    sn_words[0] = *(volatile uint32_t *)(0x0080A00C);
-    sn_words[1] = *(volatile uint32_t *)(0x0080A040);
-    sn_words[2] = *(volatile uint32_t *)(0x0080A044);
-    sn_words[3] = *(volatile uint32_t *)(0x0080A048);
+    uint32_t snWords[4];
+    snWords[0] = *(volatile uint32_t *)(0x0080A00C);
+    snWords[1] = *(volatile uint32_t *)(0x0080A040);
+    snWords[2] = *(volatile uint32_t *)(0x0080A044);
+    snWords[3] = *(volatile uint32_t *)(0x0080A048);
 
     // Take these raw values and convert them into a string of hex characters
-    ptrdiff_t word_offset = 0;
+    ptrdiff_t wordOffset = 0;
     for (int i = 0; i < 4; i++) {
-        snprintf(serial_num + word_offset, 8 + 1, "%08lX", sn_words[i]);
-        word_offset += 8;
+        snprintf(serialNum + wordOffset, 8 + 1, "%08lX", snWords[i]);
+        wordOffset += 8;
     }
 }
 

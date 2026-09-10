@@ -22,7 +22,7 @@ void Loom_Analog::measure() {
     }
 }
 
-void Loom_Analog::display_data() {
+void Loom_Analog::displayData() {
     Serial.printf("Analog:\n");
     Serial.printf("    A%u", pin->number);
 

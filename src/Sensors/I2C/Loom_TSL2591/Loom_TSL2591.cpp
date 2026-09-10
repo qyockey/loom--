@@ -34,7 +34,7 @@ void Loom_TSL2591::measure() {
     data->visible = data->fullSpectrum - data->infrared;
 }
 
-void Loom_TSL2591::display_data() {
+void Loom_TSL2591::displayData() {
     if (!initialized) {
         return;
     }

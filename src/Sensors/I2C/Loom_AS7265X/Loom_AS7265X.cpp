@@ -51,7 +51,7 @@ void Loom_AS7265X::measure() {
     data->nir[5] = asInst.getCalibratedW();
 }
 
-void Loom_AS7265X::display_data() {
+void Loom_AS7265X::displayData() {
     if (!initialized) {
         return;
     }

@@ -32,7 +32,7 @@ void Loom_Hypnos::measure() {
     timestamp->timeUtc[19] = 'Z';
 }
 
-void Loom_Hypnos::display_data() {
+void Loom_Hypnos::displayData() {
     Serial.printf(
         "Hypnos:\n"
         "    Time UTC: %s\n"
@@ -48,11 +48,11 @@ void Loom_Hypnos::setPowerRails(struct PowerrailConfig railConfig) {
     digitalWrite(PIN_RAIL_5V, railConfig.rail_5v);
 }
 
-void Loom_Hypnos::power_down() {
+void Loom_Hypnos::powerDown() {
     setPowerRails(railConfigAsleep);
 }
 
-void Loom_Hypnos::power_up() {
+void Loom_Hypnos::powerUp() {
     setPowerRails(railConfigAwake);
 }
 
@@ -90,7 +90,7 @@ int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max)
             delay(10);
         }
 
-        long value_long = Serial.parseInt();
+        long valueLong = Serial.parseInt();
 
         /* Clear any leftover newline or carriage return characters from the
          * buffer */
@@ -102,18 +102,18 @@ int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max)
             Serial.read();
         }
 
-        int16_t value_16 = (int16_t) value_long;
-        if (value_long < INT16_MIN
-            || value_long > INT16_MAX
-            || value_16 < min
-            || value_16 > max
+        int16_t value16 = (int16_t) valueLong;
+        if (valueLong < INT16_MIN
+            || valueLong > INT16_MAX
+            || value16 < min
+            || value16 > max
         ) {
-            Serial.printf("[WARNING] value %ld out of range.\n", value_long);
+            Serial.printf("[WARNING] value %ld out of range.\n", valueLong);
             continue;
         }
 
-        Serial.printf("Value entered: %d\n", value_16);
-        return value_16;
+        Serial.printf("Value entered: %d\n", value16);
+        return value16;
     }
 }
 
@@ -127,16 +127,16 @@ void Loom_Hypnos::setCustomTime() {
         "\n"
     );
 
-    int16_t computer_year = serialReadInt("Enter the year", 2000, 9999);
-    int16_t computer_month = serialReadInt("Enter the month", 1, 12);
-    int16_t computer_day = serialReadInt("Enter the day", 1, 31);
-    int16_t computer_hour = serialReadInt("Enter the hour", 0, 23);
-    int16_t computer_minute = serialReadInt("Enter the minute", 0, 59);
-    int16_t computer_second = serialReadInt("Enter the second", 0, 59);
+    int16_t computerYear = serialReadInt("Enter the year", 2000, 9999);
+    int16_t computerMonth = serialReadInt("Enter the month", 1, 12);
+    int16_t computerDay = serialReadInt("Enter the day", 1, 31);
+    int16_t computerHour = serialReadInt("Enter the hour", 0, 23);
+    int16_t computerMinute = serialReadInt("Enter the minute", 0, 59);
+    int16_t computerSecond = serialReadInt("Enter the second", 0, 59);
 
     DateTime newTimeUtc = DateTime(
-        computer_year, computer_month, computer_day,
-        computer_hour, computer_minute, computer_second
+        computerYear, computerMonth, computerDay,
+        computerHour, computerMinute, computerSecond
     );
     rtcExternal.adjust(newTimeUtc);
 
