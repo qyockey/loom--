@@ -1,5 +1,14 @@
 #pragma once
 
+enum ModuleTag {
+    MODULE_RTC,
+    MODULE_ANALOG,
+    MODULE_RANDOM,
+    MODULE_TSL2591,
+    MODULE_STEMMA,
+    MODULE_AS7265X,
+};
+
 /**
  *  General overarching interface to provide basic unified functionality
  *

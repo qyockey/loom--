@@ -11,6 +11,13 @@
 #define ADC_VREF 3.3F
 #define MAX_ANALOG_PINS 8
 
+struct AnalogData {
+    enum ModuleTag tag = MODULE_ANALOG;
+    uint8_t pin;
+    uint16_t adcCode;
+    uint16_t mv;
+};
+
 /* Contain all the information regarding the analog pin that we want to use */
 struct AnalogMapping {
     bool active;

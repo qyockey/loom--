@@ -21,6 +21,11 @@
 #define RAIL_5V_ON HIGH
 #define RAIL_5V_OFF (!RAIL_5V_ON)
 
+struct TimestampData {
+    enum ModuleTag tag = MODULE_RTC;
+    char timeUtc[21];
+};
+
 /**
  * Struct to represent power rail states
  */
@@ -63,8 +68,6 @@ class Loom_Hypnos : public Module{
   protected:
 
     /* These aren't used with the Hypnos.
-     * measure() *could* be used to record the current time, but we instead
-     * prefer to record it during package.
      * power_down() and power_up() also *could* be implemented, but the logic is
      * cleaner and easier to understand when all inside sleep() */
     void measure() override {};

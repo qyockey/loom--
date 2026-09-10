@@ -2,6 +2,11 @@
 
 #include "../../Loom_Manager.h"
 
+struct RandomData {
+    enum ModuleTag tag = MODULE_RANDOM;
+    uint8_t value;
+};
+
 /**
  * Random Sensor
  */
