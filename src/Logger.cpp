@@ -47,7 +47,7 @@ void Logger::genericLog(LogContext log, const char *msg) {
     if (hypnosInst != nullptr) {
         traverse += snprintf_P(
             logMessage + traverse, OUTPUT_SIZE - traverse,
-            PSTR("[%s] "),
+            PSTR("[%sZ] "),
             hypnosInst->getCurrentTimeUtc().text()
         );
     }
