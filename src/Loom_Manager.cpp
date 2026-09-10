@@ -4,12 +4,15 @@
 #include "Loom_Manager.h"
 #include "Logger.h"
 
+
 // Constructor
 Manager::Manager(
+    struct PacketData *packet,
     const char *devName,
     uint32_t instanceNum
 ) : deviceName(devName), instanceNumber(instanceNum) {
     numRegisteredModules = 0;
+    this->packet = packet;
     read_serial_num();
 
     pinMode(LED_BUILTIN, OUTPUT);
@@ -63,6 +66,7 @@ void Manager::initialize() {
 // Measure data from all modules
 void Manager::measure() {
     LOG("*** Measuring ***");
+    ++packet->number;
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->measure();
     }

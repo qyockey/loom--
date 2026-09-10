@@ -21,6 +21,10 @@
 #define LOOM_SERIAL_TIMEOUT_MS 20000U
 #endif
 
+struct PacketData {
+    uint32_t number;
+};
+
 /**
  * Unifies all the various sensors to allow for collection in unison
  * This class manages the JSON document store of all sensor information
@@ -31,10 +35,12 @@ class Manager {
   public:
     /**
      * Constructs a new Manager
+     * @param packet Pointer to latest measured packet
      * @param devName Device name to provided for logging purposes
      * @param instanceNum Instance number for logging purposes
      */
     Manager(
+        struct PacketData *packet,
         const char *devName,
         uint32_t instanceNum
     );
@@ -115,6 +121,8 @@ class Manager {
      * Reinitialize modules after power restored
      */
     void power_up();
+
+    struct PacketData *packet;
 
     // List of modules that have been added to the stack
     Module *modules[LOOM_MAX_MODULES];
