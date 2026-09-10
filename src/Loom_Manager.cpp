@@ -5,8 +5,11 @@
 #include "Logger.h"
 
 // Constructor
-Manager::Manager(const char *devName, uint32_t instanceNum)
-    : deviceName(devName), instanceNumber(instanceNum) {
+Manager::Manager(
+    const char *devName,
+    uint32_t instanceNum,
+    Loom_Hypnos *hypnosInst
+) : deviceName(devName), instanceNumber(instanceNum), hypnosInst(hypnosInst) {
     numRegisteredModules = 0;
     read_serial_num();
 }
@@ -68,6 +71,24 @@ void Manager::display_data() {
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->display_data();
     }
+}
+
+
+void Manager::sleep(TimeSpan duration) {
+    if (hypnosInst == nullptr) {
+        pause(duration.totalseconds() * 1000);
+        return;
+    }
+
+    power_down();
+
+    hypnosInst->sleep(duration);
+
+    /* Allow time for Serial connection to establish with computer */
+    beginSerial(1000);
+    LOG("Waking from sleep");
+
+    power_up();
 }
 
 

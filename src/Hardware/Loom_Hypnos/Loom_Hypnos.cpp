@@ -5,14 +5,16 @@
 
 volatile bool Loom_Hypnos::shouldPowerUp = false;
 
-Loom_Hypnos::Loom_Hypnos(Manager& man, HypnosVersion version) : Module() {
-    manInst = &man;
+Loom_Hypnos::Loom_Hypnos(
+    struct TimestampData *timestamp,
+    HypnosVersion version,
+    const char *deviceName
+) : Module() {
+    this->timestamp = timestamp;
 
     /* Create SD card manager */
     sdChipSelect = (uint8_t) version;
-    sdMan = new SdManager(sdChipSelect, man.get_device_name());
-
-    manInst->registerModule(this);
+    sdMan = new SdManager(sdChipSelect, deviceName);
 }
 
 void Loom_Hypnos::initialize() {
@@ -143,9 +145,6 @@ void Loom_Hypnos::setCustomTime() {
 /* Sleep Functionality */
 
 void Loom_Hypnos::sleep(TimeSpan duration) {
-    /* Prepare modules for sleep */
-    manInst->power_down();
-
     /* Safeguard: clear alarms if any have somehow activated */
     RTC_DS.clearAlarm();
 
@@ -191,13 +190,6 @@ void Loom_Hypnos::sleep(TimeSpan duration) {
 
     /* Explicitly clear interrupt pending flag after RTC alarm is cleared */
     EIC->INTFLAG.bit.EXTINT3 = 1;
-
-    /* Allow time for Serial connection to establish with computer */
-    manInst->beginSerial(1000);
-    LOG("Waking from sleep");
-
-    /* Re-initialize all modules */
-    manInst->power_up();
 }
 
 void Loom_Hypnos::wakeup() {

@@ -4,7 +4,6 @@
 #include <OPEnS_RTC.h>
 #include <ArduinoLowPower.h>
 
-#include "Loom_Manager.h"
 #include "Module.h"
 #include "SdManager.h"
 
@@ -84,11 +83,16 @@ class Loom_Hypnos : public Module{
 
     /**
      * Constructs a new Hypnos instance and registers it with the manager
-     * @param man Reference to the manager
+     * @param timestamp Pointer to mesured timestamp structure
      * @param version The version of the Hypnos in use, this changes which pin
      * is used as SD chip select
+     * @param deviceName Name of device to use in log files
      */
-    Loom_Hypnos(Manager& man, HypnosVersion version);
+    Loom_Hypnos(
+        struct TimestampData *timestamp,
+        HypnosVersion version,
+        const char *deviceName
+    );
 
     /* Power Control Functionality */
 
@@ -137,7 +141,7 @@ class Loom_Hypnos : public Module{
 
   private:
 
-    Manager *manInst = nullptr;
+    struct TimestampData *timestamp;
     SdManager *sdMan = nullptr;
     uint8_t sdChipSelect;
 

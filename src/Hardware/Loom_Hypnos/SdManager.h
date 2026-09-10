@@ -4,7 +4,6 @@
 #include <SPI.h>
 #include <SdFat.h>
 
-#include "Loom_Manager.h"
 #include "Module.h"
 
 #define SD_PATH_MAX 256U
