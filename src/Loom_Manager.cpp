@@ -85,11 +85,10 @@ void Manager::sleep(TimeSpan duration, bool waitForSerial) {
 
     hypnosInst->sleep(duration);
 
-    if (waitForSerial) {
-        /* Allow time for Serial connection to establish with computer */
-        beginSerial(2000);
-        LOG("Waking from sleep");
-    }
+    /* Allow time for Serial connection to establish with computer */
+    uint64_t serialTimeout = waitForSerial ? 2000 : 0;
+    beginSerial(serialTimeout);
+    LOG("Waking from sleep");
 
     power_up();
 }
