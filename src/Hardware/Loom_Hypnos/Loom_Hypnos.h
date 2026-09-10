@@ -88,10 +88,8 @@ class Loom_Hypnos : public Module {
      * manager.pause()
      * @param duration The time that will elapse before the device is woken by
      * the RTC
-     * @param waitForSerial Whether to still execution until Serial monitor
-     * reconnects after powering up.  This takes about 2 seconds.
      */
-    void sleep(TimeSpan duration, bool waitForSerial = false);
+    void sleep(TimeSpan duration);
     friend class Manager;
 
   public:

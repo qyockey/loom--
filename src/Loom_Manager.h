@@ -78,8 +78,10 @@ class Manager {
      * manager.pause()
      * @param duration The time that will elapse before the device is woken by
      * the RTC
+     * @param waitForSerial Whether to still execution until Serial monitor
+     * reconnects after powering up.  This takes about 2 seconds.
      */
-    void sleep(TimeSpan duration);
+    void sleep(TimeSpan duration, bool waitForSerial = false);
 
     /**
      * Gets the current device name set by the user
