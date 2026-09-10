@@ -79,6 +79,19 @@ class Loom_Hypnos : public Module{
     /* Display current time in UTC */
     void display_data() override;
 
+    /**
+     * Drops the Feather M0 and Hypnos board into a low power sleep waiting for
+     * an interrupt to wake it up and pull it out of sleep.
+     * This is much more power efficient for long delays than calling
+     * manager.pause()
+     * @param duration The time that will elapse before the device is woken by
+     * the RTC
+     * @param waitForSerial Whether to still execution until Serial monitor
+     * reconnects after powering up.  This takes about 2 seconds.
+     */
+    void sleep(TimeSpan duration, bool waitForSerial = false);
+    friend class Manager;
+
   public:
 
     /**
@@ -119,18 +132,6 @@ class Loom_Hypnos : public Module{
     void setSleepConfiguration(PowerrailConfig config) {
         railConfigAsleep = config;
     };
-
-    /* Sleep Functionality */
-
-    /**
-     * Drops the Feather M0 and Hypnos board into a low power sleep waiting for
-     * an interrupt to wake it up and pull it out of sleep.
-     * This is much more power efficient for long delays than calling
-     * manager.pause()
-     * @param duration The time that will elapse before the device is woken by
-     * the RTC
-     */
-    void sleep(TimeSpan duratiwon);
 
     /* RTC Functionality */
 
