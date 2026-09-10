@@ -75,6 +75,13 @@ void Manager::measure() {
 
 // Display data from all modules
 void Manager::display_data() {
+    Serial.printf(
+        "Packet:\n"
+        "    Number: %lu\n"
+        "\n",
+        packet->number
+    );
+
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->display_data();
     }
