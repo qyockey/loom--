@@ -1,4 +1,5 @@
 #include "Loom_AS7265X.h"
+#include "Logger.h"
 
 Loom_AS7265X::Loom_AS7265X(struct AS7265XData *data, uint8_t addr)
     : Module() {
@@ -7,13 +8,22 @@ Loom_AS7265X::Loom_AS7265X(struct AS7265XData *data, uint8_t addr)
 }
 
 void Loom_AS7265X::initialize() {
-    asInst.begin();
+    initialized = asInst.begin();
+    if (!initialized) {
+        ERRORF("Module AS7265X not detected at I2C address 0x%02X", addr);
+        return;
+    }
+
     asInst.setGain(64);
     asInst.setMeasurementMode(AS7265X_MEASUREMENT_MODE_6CHAN_ONE_SHOT);
     asInst.setIntegrationCycles(50);
 }
 
 void Loom_AS7265X::measure() {
+    if (!initialized) {
+        return;
+    }
+
     asInst.takeMeasurements();
 
     // UV
@@ -42,6 +52,10 @@ void Loom_AS7265X::measure() {
 }
 
 void Loom_AS7265X::display_data() {
+    if (!initialized) {
+        return;
+    }
+
     Serial.printf("AS7265X:\n");
     Serial.printf("    UV_410nm: %u\n", data->uv[0]);
     Serial.printf("    UV_435nm: %u\n", data->uv[1]);

@@ -1,12 +1,18 @@
 #include "Loom_TSL2591.h"
+#include "Logger.h"
 
-Loom_TSL2591::Loom_TSL2591(TSL2591Data *data) : Module() {
+Loom_TSL2591::Loom_TSL2591(TSL2591Data *data, uint8_t addr) : Module() {
     this->data = data;
+    this->addr = addr;
 }
 
 void Loom_TSL2591::initialize() {
     // Establish connection with sensor
-    tsl.begin();
+    initialized = tsl.begin(addr);
+    if (!initialized) {
+        ERRORF("Module TSL2591 not detected at I2C address 0x%02X", addr);
+        return;
+    }
 
     // Set the gain and integration time of the sensor
     tsl.setGain(TSL2591_GAIN_MED);
@@ -14,6 +20,10 @@ void Loom_TSL2591::initialize() {
 }
 
 void Loom_TSL2591::measure() {
+    if (!initialized) {
+        return;
+    }
+
     /* Pull the data from the sensor.  The low 16 bits are the full spectrum
      * measurement and the high 16 bits are infrared only.  Visible is the
      * difference between full spectrum and IR. */
@@ -25,6 +35,10 @@ void Loom_TSL2591::measure() {
 }
 
 void Loom_TSL2591::display_data() {
+    if (!initialized) {
+        return;
+    }
+
     Serial.printf("TSL2591:\n");
     Serial.printf("    visible_counts: %d\n", data->visible);
     Serial.printf("    infrared_counts: %d\n", data->infrared);

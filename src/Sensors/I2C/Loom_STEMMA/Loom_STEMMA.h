@@ -37,4 +37,5 @@ class Loom_STEMMA : public Module {
     Adafruit_seesaw stemma; // Adafruit STEMMA Sensor Object
 
     uint8_t addr;
+    bool initialized;
 };

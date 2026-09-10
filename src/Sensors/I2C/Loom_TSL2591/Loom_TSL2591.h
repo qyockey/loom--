@@ -27,10 +27,13 @@ class Loom_TSL2591 : public Module {
     /**
      * Constructs a new TSL2591 sensor
      * @param data Pointer to TSL2591 measured data structure
+     * @param addr I2C address
      */
-    Loom_TSL2591(TSL2591Data *data);
+    Loom_TSL2591(TSL2591Data *data, uint8_t addr = TSL2591_ADDR);
 
   private:
     Adafruit_TSL2591 tsl; // Adafruit TSL2591 Sensor Object
     TSL2591Data *data;
+    uint8_t addr;
+    bool initialized;
 };

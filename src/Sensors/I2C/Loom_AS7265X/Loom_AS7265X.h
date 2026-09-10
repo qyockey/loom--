@@ -32,10 +32,11 @@ class Loom_AS7265X : public Module {
      * @param data Pointer to AS7265X measured data structure
      * @param addr I2C address that is assigned to the sensor
      */
-    Loom_AS7265X(struct AS7265XData *data, uint8_t addr = 0x49);
+    Loom_AS7265X(struct AS7265XData *data, uint8_t addr = AS7265X_ADDR);
 
   private:
     struct AS7265XData *data;
     AS7265X asInst;    // Instance of the AS7265X
     uint8_t addr;
+    bool initialized;
 };
