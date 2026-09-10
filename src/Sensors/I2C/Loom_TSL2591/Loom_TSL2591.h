@@ -4,7 +4,6 @@
 #include <Adafruit_TSL2591.h>
 
 #include "Module.h"
-#include "Loom_Manager.h"
 
 struct TSL2591Data {
     enum ModuleTag tag = MODULE_TSL2591;
@@ -18,20 +17,20 @@ struct TSL2591Data {
  */
 class Loom_TSL2591 : public Module {
   protected:
-    // Manager controlled functions
     void measure() override;
     void initialize() override;
     void display_data() override;
+    void power_down() override {};
+    void power_up() override {};
 
   public:
     /**
      * Constructs a new TSL2591 sensor
-     * @param man Reference to the manager that is used to universally package all data
+     * @param data Pointer to TSL2591 measured data structure
      */
-    Loom_TSL2591(Manager &man);
+    Loom_TSL2591(TSL2591Data *data);
 
   private:
-    Manager *manInst;
     Adafruit_TSL2591 tsl; // Adafruit TSL2591 Sensor Object
-    uint16_t lightLevels[3] = {0, 0, 0}; // Array of size 3 to hold all collected data
+    TSL2591Data *data;
 };

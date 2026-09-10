@@ -4,9 +4,8 @@
 
 #include "Loom_Random.h"
 
-Loom_Random::Loom_Random(Manager &man) : Module() {
-    manInst = &man;
-    manInst->registerModule(this);
+Loom_Random::Loom_Random(struct RandomData *random) : Module() {
+    this->random = random;
 }
 
 void Loom_Random::initialize() {
@@ -14,11 +13,11 @@ void Loom_Random::initialize() {
 }
 
 void Loom_Random::measure() {
-    value = rand() % 100;
+    random->value = rand() % 100;
 }
 
 void Loom_Random::display_data() {
     Serial.printf("Random:\n");
-    Serial.printf("    value: %u\n", value);
+    Serial.printf("    value: %u\n", random->value);
     Serial.printf("\n");
 }

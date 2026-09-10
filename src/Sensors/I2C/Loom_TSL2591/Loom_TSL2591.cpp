@@ -1,8 +1,7 @@
 #include "Loom_TSL2591.h"
 
-Loom_TSL2591::Loom_TSL2591(Manager &man) : Module() {
-    manInst = &man;
-    manInst->registerModule(this);
+Loom_TSL2591::Loom_TSL2591(TSL2591Data *data) : Module() {
+    this->data = data;
 }
 
 void Loom_TSL2591::initialize() {
@@ -15,16 +14,20 @@ void Loom_TSL2591::initialize() {
 }
 
 void Loom_TSL2591::measure() {
-    // Pull the data from the sensor
-    lightLevels[0] = tsl.getLuminosity(TSL2591_VISIBLE);;
-    lightLevels[1] = tsl.getLuminosity(TSL2591_INFRARED);
-    lightLevels[2] = tsl.getLuminosity(TSL2591_FULLSPECTRUM);
+    /* Pull the data from the sensor.  The low 16 bits are the full spectrum
+     * measurement and the high 16 bits are infrared only.  Visible is the
+     * difference between full spectrum and IR. */
+    uint32_t fullLuminosity = tsl.getFullLuminosity();
+
+    data->fullSpectrum = fullLuminosity & 0xFFFF;
+    data->infrared = fullLuminosity >> 16;
+    data->visible = data->fullSpectrum - data->infrared;
 }
 
 void Loom_TSL2591::display_data() {
     Serial.printf("TSL2591:\n");
-    Serial.printf("    visible_counts: %d\n", lightLevels[0]);
-    Serial.printf("    infrared_counts: %d\n", lightLevels[1]);
-    Serial.printf("    full_spectrum_counts: %d\n", lightLevels[2]);
+    Serial.printf("    visible_counts: %d\n", data->visible);
+    Serial.printf("    infrared_counts: %d\n", data->infrared);
+    Serial.printf("    full_spectrum_counts: %d\n", data->fullSpectrum);
     Serial.printf("\n");
 }

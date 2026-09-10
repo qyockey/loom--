@@ -3,7 +3,6 @@
 #include <cstdint>
 #include <Adafruit_seesaw.h>
 
-#include "Loom_Manager.h"
 #include "Module.h"
 
 struct StemmaData {
@@ -19,24 +18,23 @@ struct StemmaData {
  */
 class Loom_STEMMA : public Module {
   protected:
-    // Manager controlled functions
     void measure() override;
     void initialize() override;
     void display_data() override;
+    void power_down() override {};
+    void power_up() override {};
 
   public:
     /**
      * Constructs a new TSL2591 sensor
-     * @param man Reference to the manager that is used to universally package all data
-     * @param address I2C address that is assigned to the sensor
+     * @param data Pointer to STEMMA measured data structure
+     * @param addr I2C address that is assigned to the sensor
      */
-    Loom_STEMMA(Manager &man, uint8_t address);
+    Loom_STEMMA(struct StemmaData *data, uint8_t address = 0x36);
 
   private:
-    Manager *manInst;
+    struct StemmaData *data;
     Adafruit_seesaw stemma; // Adafruit STEMMA Sensor Object
 
-    uint8_t address;
-    float temperature; // Soil temperature
-    uint16_t cap;      // Soil capacitive
+    uint8_t addr;
 };

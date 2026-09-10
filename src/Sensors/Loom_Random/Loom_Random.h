@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../Loom_Manager.h"
+#include "Module.h"
 
 struct RandomData {
     enum ModuleTag tag = MODULE_RANDOM;
@@ -12,20 +12,19 @@ struct RandomData {
  */
 class Loom_Random : public Module {
   protected:
-    // Manager controlled functions
     void measure() override;
     void initialize() override;
     void display_data() override;
+    void power_down() override;
+    void power_up() override;
 
   public:
     /**
      * Constructs a new Random sensor
-     * @param man Reference to the manager that is used to universally package all data
+     * @param Pointer to measured random data structure
      */
-    Loom_Random(Manager &man);
+    Loom_Random(struct RandomData *random);
 
   private:
-    Manager *manInst;
-    bool device_on;
-    uint8_t value;
+    struct RandomData *random;
 };

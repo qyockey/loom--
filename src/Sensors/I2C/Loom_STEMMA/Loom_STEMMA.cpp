@@ -1,23 +1,22 @@
 #include "Loom_STEMMA.h"
 
-Loom_STEMMA::Loom_STEMMA(Manager &man, uint8_t addr) : Module() {
-    this->address = addr;
-    manInst = &man;
-    manInst->registerModule(this);
+Loom_STEMMA::Loom_STEMMA(struct StemmaData *data, uint8_t addr) : Module() {
+    this->data = data;
+    this->addr = addr;
 }
 
 void Loom_STEMMA::initialize() {
-    stemma.begin(address);
+    stemma.begin(addr);
 }
 
 void Loom_STEMMA::measure() {
-    temperature = stemma.getTemp();
-    cap = stemma.touchRead(0);
+    data->temperatureC = stemma.getTemp();
+    data->capacitive = stemma.touchRead(0);
 }
 
 void Loom_STEMMA::display_data() {
     Serial.printf("STEMMA:\n");
-    Serial.printf("    temperature_C: %f\n", temperature);
-    Serial.printf("    capacitive_counts: %u\n", cap);
+    Serial.printf("    temperature_C: %u\n", data->temperatureC);
+    Serial.printf("    capacitive_counts: %u\n", data->capacitive);
     Serial.printf("\n");
 }
