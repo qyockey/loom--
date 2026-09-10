@@ -74,7 +74,7 @@ void Manager::display_data() {
 }
 
 
-void Manager::sleep(TimeSpan duration) {
+void Manager::sleep(TimeSpan duration, bool waitForSerial) {
     if (hypnosInst == nullptr) {
         pause(duration.totalseconds() * 1000);
         return;
@@ -84,9 +84,11 @@ void Manager::sleep(TimeSpan duration) {
 
     hypnosInst->sleep(duration);
 
-    /* Allow time for Serial connection to establish with computer */
-    beginSerial(1000);
-    LOG("Waking from sleep");
+    if (waitForSerial) {
+        /* Allow time for Serial connection to establish with computer */
+        beginSerial(2000);
+        LOG("Waking from sleep");
+    }
 
     power_up();
 }
