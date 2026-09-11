@@ -65,9 +65,6 @@ enum HypnosVersion { V3_2 = 10U, V3_3 = 11U, ADALOGGER = 4U };
 class Loom_Hypnos : public Module {
   protected:
 
-    void powerUp() override;
-    void powerDown() override;
-
     /* Initialize power rails and RTC */
     void initialize() override;
 
@@ -76,6 +73,12 @@ class Loom_Hypnos : public Module {
 
     /* Display measured time in UTC */
     void displayData() override;
+
+    /* Apply awake poewr rail configuration */
+    void powerUp() override;
+
+    /* Apply asleep poewr rail configuration */
+    void powerDown() override;
 
   public:
 
