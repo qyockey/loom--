@@ -23,14 +23,15 @@ void Loom_Analog::measure() {
 }
 
 void Loom_Analog::displayData() {
-    Serial.printf("Analog:\n");
-    Serial.printf("    A%u", pin->number);
-
-    if (pin->number == PIN_VBAT) {
-        Serial.printf(" (Vbat)");
-    }
-
-    Serial.printf(": %u mV (code %u)\n\n", pin->mv, pin->analogCode);
+    Serial.printf(
+        "Analog:\n"
+        "    Pin: A%u%s\n"
+        "    mV: %u\n"
+        "    ADC Code: %u\n"
+        "\n",
+        pin->number, (pin->number == PIN_VBAT) ? " (VBAT)" : "",
+        pin->mv, pin->analogCode
+    );
 }
 
 /* Convert ADC code to voltage in millivolts */

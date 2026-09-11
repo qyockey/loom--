@@ -40,8 +40,8 @@ void Loom_TSL2591::displayData() {
     }
 
     Serial.printf("TSL2591:\n");
-    Serial.printf("    visible_counts: %d\n", data->visible);
-    Serial.printf("    infrared_counts: %d\n", data->infrared);
-    Serial.printf("    full_spectrum_counts: %d\n", data->fullSpectrum);
+    Serial.printf("    Visible: %d\n", data->visible);
+    Serial.printf("    Infrared: %d\n", data->infrared);
+    Serial.printf("    Full Spectrum: %d\n", data->fullSpectrum);
     Serial.printf("\n");
 }

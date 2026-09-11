@@ -28,7 +28,7 @@ void Loom_STEMMA::displayData() {
     }
 
     Serial.printf("STEMMA:\n");
-    Serial.printf("    temperature_C: %u\n", data->temperatureC);
-    Serial.printf("    capacitive_counts: %u\n", data->capacitive);
+    Serial.printf("    Temperature °C: %u\n", data->temperatureC);
+    Serial.printf("    Capacitive Counts: %u\n", data->capacitive);
     Serial.printf("\n");
 }
