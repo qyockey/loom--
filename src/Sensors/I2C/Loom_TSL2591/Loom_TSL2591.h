@@ -1,6 +1,5 @@
 #pragma once
 
-#include <Adafruit_Sensor.h>
 #include <Adafruit_TSL2591.h>
 
 #include "Module.h"

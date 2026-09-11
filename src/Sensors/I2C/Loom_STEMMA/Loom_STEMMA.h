@@ -1,6 +1,5 @@
 #pragma once
 
-#include <cstdint>
 #include <Adafruit_seesaw.h>
 
 #include "Module.h"

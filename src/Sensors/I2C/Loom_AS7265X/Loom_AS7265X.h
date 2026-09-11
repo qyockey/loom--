@@ -1,7 +1,5 @@
 #pragma once
 
-#include <cstdint>
-#include <Wire.h>
 #include <SparkFun_AS7265X.h>
 
 #include "Module.h"
