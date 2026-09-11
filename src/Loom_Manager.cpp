@@ -4,7 +4,6 @@
 #include "Loom_Manager.h"
 #include "Logger.h"
 
-
 // Constructor
 Manager::Manager(
     struct PacketData *packet,
@@ -18,7 +17,6 @@ Manager::Manager(
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
 }
-
 
 // Append module to array
 void Manager::registerModule(Module *moduleInst) {
@@ -39,7 +37,6 @@ void Manager::registerModule(Module *moduleInst) {
     numRegisteredModules++;
 }
 
-
 // Initialize Serial interface
 void Manager::beginSerial(uint64_t timeoutMillis) {
     Serial.begin(BAUD_RATE);
@@ -53,14 +50,12 @@ void Manager::beginSerial(uint64_t timeoutMillis) {
     digitalWrite(LED_BUILTIN, HIGH);
 }
 
-
 // Initialize all modules
 void Manager::initialize() {
     LOG("*** Initializing ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->initialize();
     }
-}
 
 
 // Measure data from all modules
@@ -71,7 +66,6 @@ void Manager::measure() {
         modules[i]->measure();
     }
 }
-
 
 // Display data from all modules
 void Manager::displayData() {
@@ -94,13 +88,11 @@ void Manager::powerDown() {
     }
 }
 
-
 void Manager::powerUp() {
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->powerUp();
     }
 }
-
 
 void Manager::sleep(uint32_t millis, bool waitForSerial) {
     /* Allow time for message to get through before Serial bus loses power */
@@ -131,7 +123,6 @@ void Manager::sleep(uint32_t millis, bool waitForSerial) {
     LOG("Serial monitor reattached");
 }
 
-
 void Manager::readSerialNum() {
     /* Serial numbers are made up of four words located at these specific
      * registers (see datasheet section 9.3.3) */
@@ -142,16 +133,13 @@ void Manager::readSerialNum() {
     snWords[3] = *(volatile uint32_t *)(0x0080A048);
 
     // Take these raw values and convert them into a string of hex characters
-    ptrdiff_t wordOffset = 0;
     for (int i = 0; i < 4; i++) {
-        snprintf(serialNum + wordOffset, 8 + 1, "%08lX", snWords[i]);
-        wordOffset += 8;
+        snprintf(serialNum + 8 * i, 8 + 1, "%08lX", snWords[i]);
     }
 }
 
-
 // Pause for specified time duration in ms
-// NOTE: CPU runs at 100% during pause, use hypnos.sleep for low power
+// NOTE: CPU runs at 100% during pause, use manager.sleep for low power
 void Manager::pause(const uint32_t ms) const {
     uint32_t waitTime = millis() + ms;
     while (millis() < waitTime) {

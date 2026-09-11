@@ -118,7 +118,6 @@ int16_t Loom_Hypnos::serialReadInt(const char *prompt, int16_t min, int16_t max)
 }
 
 void Loom_Hypnos::setCustomTime() {
-    /* Print call is broken up, otherwise last line is mysteriously truncated */
     LOGF(
         "\n"
         "############################\n"
