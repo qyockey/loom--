@@ -1,11 +1,10 @@
 #pragma once
 
 #include <Arduino.h>
-#include <OPEnS_RTC.h>
 #include <ArduinoLowPower.h>
+#include <OPEnS_RTC.h>
 
 #include "Module.h"
-#include "SdManager.h"
 
 /* Pins on the Feather used to control Hypnos features */
 #define PIN_RAIL_3V 5U
@@ -20,8 +19,10 @@
 #define RAIL_5V_ON HIGH
 #define RAIL_5V_OFF (!RAIL_5V_ON)
 
+#define TIME_SIZE 21U
+
 struct TimestampData {
-    char timeUtc[21];
+    char timeUtc[TIME_SIZE];
 };
 
 /**
@@ -80,20 +81,18 @@ class Loom_Hypnos : public Module {
     /* Apply asleep poewr rail configuration */
     void powerDown() override;
 
+    /* Write CSV data */
+    void writeCsvHeader1(File *csv) override;
+    void writeCsvHeader2(File *csv) override;
+    void writeCsvBody(File *csv) override;
+
   public:
 
     /**
      * Constructs a new Hypnos instance and registers it with the manager
      * @param timestamp Pointer to mesured timestamp structure
-     * @param version The version of the Hypnos in use, this changes which pin
-     * is used as SD chip select
-     * @param deviceName Name of device to use in log files
      */
-    Loom_Hypnos(
-        struct TimestampData *timestamp,
-        HypnosVersion version,
-        const char *deviceName
-    );
+    Loom_Hypnos(struct TimestampData *timestamp);
 
     /* Power Control Functionality */
 
@@ -131,8 +130,6 @@ class Loom_Hypnos : public Module {
   private:
 
     struct TimestampData *timestamp;
-    SdManager *sdMan = nullptr;
-    uint8_t sdChipSelect;
 
     /* Power rails */
 

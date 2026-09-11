@@ -20,6 +20,9 @@ class Loom_TSL2591 : public Module {
     void displayData() override;
     void powerDown() override {};
     void powerUp() override {};
+    void writeCsvHeader1(File *csv) override;
+    void writeCsvHeader2(File *csv) override;
+    void writeCsvBody(File *csv) override;
 
   public:
     /**

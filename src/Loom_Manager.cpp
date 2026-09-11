@@ -8,11 +8,15 @@
 Manager::Manager(
     struct PacketData *packet,
     const char *devName,
-    uint32_t instanceNum
-) : deviceName(devName), instanceNumber(instanceNum) {
+    uint32_t instanceNum,
+    HypnosVersion hypnosVersion
+) :
+    deviceName(devName),
+    instanceNumber(instanceNum),
+    sd((uint8_t) hypnosVersion, deviceName) {
+
     numRegisteredModules = 0;
     this->packet = packet;
-    readSerialNum();
 
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
@@ -57,6 +61,10 @@ void Manager::initialize() {
         modules[i]->initialize();
     }
 
+    sd.initialize();
+    writeCsvHeader();
+    // Logger::initialize(sd, this);
+}
 
 // Measure data from all modules
 void Manager::measure() {
@@ -81,6 +89,40 @@ void Manager::displayData() {
     }
 }
 
+void Manager::writeCsvHeader() {
+    LOG("Writing header to CSV file");
+    File *csvFile = sd.getCsvFile();
+    if (csvFile == nullptr) {
+        return;
+    }
+
+    for (size_t i = 0; i < numRegisteredModules; i++) {
+        modules[i]->writeCsvHeader1(csvFile);
+    }
+    csvFile->printf("\n");
+
+    for (size_t i = 0; i < numRegisteredModules; i++) {
+        modules[i]->writeCsvHeader2(csvFile);
+    }
+    csvFile->printf("\n");
+
+    csvFile->close();
+}
+
+void Manager::logToSd() {
+    LOG("Writing data to CSV file");
+    File *csvFile = sd.getCsvFile();
+    if (csvFile == nullptr) {
+        return;
+    }
+
+    for (size_t i = 0; i < numRegisteredModules; i++) {
+        modules[i]->writeCsvBody(csvFile);
+    }
+    csvFile->printf("\n");
+
+    csvFile->close();
+}
 
 void Manager::powerDown() {
     for (size_t i = 0; i < numRegisteredModules; i++) {
@@ -95,14 +137,15 @@ void Manager::powerUp() {
 }
 
 void Manager::sleep(uint32_t millis, bool waitForSerial) {
-    /* Allow time for message to get through before Serial bus loses power */
+    /* Allow time for message to get through before SD SPI bus loses power */
     LOG("Entering standby sleep");
     delay(50);
 
     Serial.end();
 
     /* Prepare peripherals for sleep and set power rails to sleep
-     * configuration */
+     * configuration.  Since the SD card may have power disconnected, no logging
+     * allowed until power is restored. */
     powerDown();
 
     /* Enter low-power consumption deep-sleep state.
@@ -112,9 +155,11 @@ void Manager::sleep(uint32_t millis, bool waitForSerial) {
     digitalWrite(LED_BUILTIN, HIGH);
 
     /* Wake peripherals from sleep and set power rails to awake
-     * configuration. */
+     * configuration.  After this, SD power is restored and logging is allowed
+     * again. */
     powerUp();
 
+    /* We can log to SD card but Serial interface isn't ready yet */
     SLOG("Waking from sleep");
 
     /* Allow time for Serial connection to establish with computer */

@@ -3,27 +3,17 @@
 #include "Loom_Hypnos.h"
 #include "Logger.h"
 
-Loom_Hypnos::Loom_Hypnos(
-    struct TimestampData *timestamp,
-    HypnosVersion version,
-    const char *deviceName
-) : Module() {
+Loom_Hypnos::Loom_Hypnos(struct TimestampData *timestamp) : Module() {
     this->timestamp = timestamp;
-
-    /* Create SD card manager */
-    sdChipSelect = (uint8_t) version;
-    sdMan = new SdManager(sdChipSelect, deviceName);
 }
 
 void Loom_Hypnos::initialize() {
     /* Set the rail pins to output mode */
     pinMode(PIN_RAIL_3V, OUTPUT);
     pinMode(PIN_RAIL_5V, OUTPUT);
-
     setPowerRails(railConfigAwake);
+
     initializeRtc();
-    sdMan->initialize();
-    Logger::initialize(sdMan, this);
 }
 
 void Loom_Hypnos::measure() {
@@ -39,6 +29,28 @@ void Loom_Hypnos::displayData() {
         "\n",
         timestamp->timeUtc
     );
+}
+
+/* Logging */
+
+void Loom_Hypnos::writeCsvHeader1(File *csv) {
+    csv->printf("Hypnos,");
+}
+
+void Loom_Hypnos::writeCsvHeader2(File *csv) {
+    csv->printf("Time UTC,");
+}
+
+void Loom_Hypnos::writeCsvBody(File *csv) {
+    /* Skip 'Z' character at end of string */
+    char utcWithoutZorT[TIME_SIZE - 1];
+    strncpy(utcWithoutZorT, timestamp->timeUtc, TIME_SIZE - 2);
+    utcWithoutZorT[TIME_SIZE - 2] = '\0';
+
+    /* Overwrite 'T' character since Excel doesn't like it */
+    utcWithoutZorT[10] = ' ';
+
+    csv->printf("%s,", utcWithoutZorT);
 }
 
 /* Power Rail Control Functionality */

@@ -4,6 +4,7 @@
 #include <OPEnS_RTC.h>
 
 #include "Hardware/Loom_Hypnos/Loom_Hypnos.h"
+#include "Hardware/Loom_Hypnos/SdManager.h"
 #include "Module.h"
 
 // Maximum number of modules the manager can manage
@@ -38,11 +39,13 @@ class Manager {
      * @param packet Pointer to latest measured packet
      * @param devName Device name to provided for logging purposes
      * @param instanceNum Instance number for logging purposes
+     * @param hypnosVersion Hypnos board version, controls SD chip select pin
      */
     Manager(
         struct PacketData *packet,
         const char *devName,
-        uint32_t instanceNum
+        uint32_t instanceNum,
+        HypnosVersion hypnosVersion = HypnosVersion::V3_3
     );
 
     /**
@@ -74,6 +77,11 @@ class Manager {
      * Prints out the current measured data to the Serial bus
      */
     void displayData();
+
+    /**
+     * Writes the current measured data to the SD card
+     */
+    void logToSd();
 
     /**
      * Drops the Feather M0 and Hypnos board into a low power sleep waiting for
@@ -122,18 +130,20 @@ class Manager {
      */
     void powerUp();
 
+    // Name and instance of the device
+    const char *deviceName;
+    uint32_t instanceNumber;
+
     struct PacketData *packet;
+
+    SdManager sd;
+    void writeCsvHeader();
 
     // List of modules that have been added to the stack
     Module *modules[LOOM_MAX_MODULES];
 
     // Number of modules registered for measurement
     uint8_t numRegisteredModules;
-
-    // Name and instance of the device
-    const char *deviceName;
-    uint32_t instanceNumber;
-    Loom_Hypnos *hypnosInst = nullptr;
 
     // Serial number unique to device
     void readSerialNum();

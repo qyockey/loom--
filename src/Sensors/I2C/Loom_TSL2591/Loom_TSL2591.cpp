@@ -45,3 +45,18 @@ void Loom_TSL2591::displayData() {
     Serial.printf("    Full Spectrum: %d\n", data->fullSpectrum);
     Serial.printf("\n");
 }
+
+void Loom_TSL2591::writeCsvHeader1(File *csv) {
+    csv->printf("TSL2591,,,");
+}
+
+void Loom_TSL2591::writeCsvHeader2(File *csv) {
+    csv->printf("Visible,Infrared,Full Spectrum,");
+}
+
+void Loom_TSL2591::writeCsvBody(File *csv) {
+    csv->printf(
+        "%04u,%04u,%04u,",
+        data->visible, data->infrared, data->fullSpectrum
+    );
+}

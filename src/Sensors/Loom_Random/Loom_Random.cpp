@@ -21,3 +21,15 @@ void Loom_Random::displayData() {
     Serial.printf("    value: %u\n", random->value);
     Serial.printf("\n");
 }
+
+void Loom_Random::writeCsvHeader1(File *csv) {
+    csv->printf("Random,");
+}
+
+void Loom_Random::writeCsvHeader2(File *csv) {
+    csv->printf("Value,");
+}
+
+void Loom_Random::writeCsvBody(File *csv) {
+    csv->printf("%03u,", random->value);
+}

@@ -22,6 +22,9 @@ class Loom_AS7265X : public Module {
     void displayData() override;
     void powerDown() override {};
     void powerUp() override {};
+    void writeCsvHeader1(File *csv) override;
+    void writeCsvHeader2(File *csv) override;
+    void writeCsvBody(File *csv) override;
 
   public:
     /**

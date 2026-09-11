@@ -32,3 +32,15 @@ void Loom_STEMMA::displayData() {
     Serial.printf("    Capacitive Counts: %u\n", data->capacitive);
     Serial.printf("\n");
 }
+
+void Loom_STEMMA::writeCsvHeader1(File *csv) {
+    csv->printf("STEMMA,,");
+}
+
+void Loom_STEMMA::writeCsvHeader2(File *csv) {
+    csv->printf("Temperature °C,Capacitive Counts,");
+}
+
+void Loom_STEMMA::writeCsvBody(File *csv) {
+    csv->printf("%02u,%04u,", data->temperatureC, data->capacitive);
+}

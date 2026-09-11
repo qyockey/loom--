@@ -42,3 +42,18 @@ uint16_t Loom_Analog::analogToMV(uint16_t analogCode) {
     /* Convert from volts to millivolts */
     return (uint16_t) (pinVoltage * 1000.0F);
 }
+
+void Loom_Analog::writeCsvHeader1(File *csv) {
+    csv->printf("Analog,,,");
+}
+
+void Loom_Analog::writeCsvHeader2(File *csv) {
+    csv->printf("Pin,ADC Code,Millivolts,");
+}
+
+void Loom_Analog::writeCsvBody(File *csv) {
+    csv->printf(
+        "%02u,%04u,%04u,",
+        pin->number, pin->analogCode, pin->mv
+    );
+}

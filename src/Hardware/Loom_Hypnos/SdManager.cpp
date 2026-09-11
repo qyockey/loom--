@@ -62,6 +62,15 @@ bool SdManager::writeDebugLine(const char *content) {
     return writeLineToFile(pathDebug, content);
 }
 
+File *SdManager::getCsvFile(void) {
+    csvFile = sd.open(pathCsv, O_RDWR | O_CREAT | O_APPEND);
+    if (!csvFile && Serial) {
+        ERRORF("Failed to open file %s\n", pathCsv);
+    }
+
+    return &csvFile;
+}
+
 bool SdManager::initFileNames() {
     /* Try to open the root of the file system so we can read all
      * files in the root directory */

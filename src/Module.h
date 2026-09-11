@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SdFat.h>
+
 /**
  *  General overarching interface to provide basic unified functionality
  *
@@ -16,4 +18,7 @@ class Module {
     virtual void powerDown() = 0;   // Cleanup before cutting power
     virtual void powerUp() = 0;     // Initialize module after power restored
 
+    virtual void writeCsvHeader1(File *csv) = 0;
+    virtual void writeCsvHeader2(File *csv) = 0;
+    virtual void writeCsvBody(File *csv) = 0;
 };

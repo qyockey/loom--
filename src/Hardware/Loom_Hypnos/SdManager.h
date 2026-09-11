@@ -42,10 +42,20 @@ class SdManager {
      */
     bool writeDebugLine(const char *content);
 
+    /**
+     * Write a single line to the CSV data file
+     * @param content Message to write
+     */
+    bool writeCsvLine(const char *content);
+
+    File *getCsvFile(void);
+
   private:
     SdFat sd;
     char deviceName[SD_DEVICE_MAX];
     bool initialized;
+
+    File csvFile;
 
     /* SPI chip select pin for the SD card module */
     uint8_t pinChipSelect;
