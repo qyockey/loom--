@@ -7,7 +7,7 @@
 #include "Hardware/Loom_Hypnos/Loom_Hypnos.h"
 #include "Hardware/Loom_Hypnos/SdManager.h"
 
-#define OUTPUT_SIZE 2000U
+#define OUTPUT_SIZE 256U
 
 struct LogContext {
     const char *file;
