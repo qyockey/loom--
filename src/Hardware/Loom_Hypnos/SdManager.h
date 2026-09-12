@@ -30,24 +30,17 @@ class SdManager {
     bool initialize();
 
     /**
-     * Write a single line to a file
-     * @param filename File to write to
-     * @param content Message to write
+     * Get pointer to debug log file
+     * Be sure to call logFile->close() when you're done with it
+     * @return Pointer to file, nullptr if error occurred
      */
-    bool writeLineToFile(const char *filename, const char *content);
+    File *getLogFile(void);
 
     /**
-     * Write a single line to the debug log file
-     * @param content Message to write
+     * Get pointer to debug log file
+     * Be sure to call csvFile->close() when you're done with it
+     * @return Pointer to file, nullptr if error occurred
      */
-    bool writeDebugLine(const char *content);
-
-    /**
-     * Write a single line to the CSV data file
-     * @param content Message to write
-     */
-    bool writeCsvLine(const char *content);
-
     File *getCsvFile(void);
 
   private:
@@ -55,6 +48,9 @@ class SdManager {
     char deviceName[SD_DEVICE_MAX];
     bool initialized;
 
+    void openFile(File *file, const char *path);
+
+    File logFile;
     File csvFile;
 
     /* SPI chip select pin for the SD card module */

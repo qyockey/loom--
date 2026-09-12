@@ -35,37 +35,37 @@ bool SdManager::initialize() {
     return true;
 }
 
-bool SdManager::writeLineToFile(const char *filename, const char *content) {
+void SdManager::openFile(File *file, const char *path) {
+    /* Print errors to Serial only, don't write to log file */
+
     if (!initialized) {
         Serial.printf(
-            "SD Card not initialized, cannot write to file %s\n",
-            filename
+            "[ERROR] SD Card not initialized, cannot write to file %s\n",
+            path
         );
-        return false;
+        return;
     }
 
-    /* Open the given file for writing, appending to existing data */
-    File file = sd.open(filename, O_RDWR | O_CREAT | O_APPEND);
-    if (!file) {
-        if (Serial) {
-            Serial.printf("[ERROR] Failed to open file %s\n", filename);
-        }
-        return false;
+    *file = sd.open(path, O_RDWR | O_CREAT | O_APPEND);
+    if (!file && Serial) {
+        Serial.printf("[ERROR] Failed to open file %s\n", path);
+        return;
     }
-
-    file.println(content);
-    file.close();
-    return true;
 }
 
-bool SdManager::writeDebugLine(const char *content) {
-    return writeLineToFile(pathDebug, content);
+File *SdManager::getLogFile(void) {
+    openFile(&logFile, pathDebug);
+    if (!logFile) {
+        return nullptr;
+    }
+
+    return &logFile;
 }
 
 File *SdManager::getCsvFile(void) {
-    csvFile = sd.open(pathCsv, O_RDWR | O_CREAT | O_APPEND);
-    if (!csvFile && Serial) {
-        ERRORF("Failed to open file %s\n", pathCsv);
+    openFile(&csvFile, pathCsv);
+    if (!csvFile) {
+        return nullptr;
     }
 
     return &csvFile;
