@@ -20,7 +20,7 @@ struct LogContext {
 #define GENERIC_LOG(silent, level, msg)                                                            \
     do {                                                                                           \
         LogContext log{__FILE__, __func__, __LINE__, silent, level};                               \
-        Logger::genericLog(log, msg);                                                              \
+        Logger::genericLog(&log, msg);                                                             \
     } while (false)
 
 #define LOG(msg) GENERIC_LOG(false, "DEBUG", msg)
@@ -33,7 +33,7 @@ struct LogContext {
         LogContext log{__FILE__, __func__, __LINE__, silent, level};                               \
         char buf[OUTPUT_SIZE];                                                                     \
         snprintf_P(buf, sizeof(buf), PSTR(msg), ##__VA_ARGS__);                                    \
-        Logger::genericLog(log, buf);                                                              \
+        Logger::genericLog(&log, buf);                                                             \
     } while (false)
 
 #define LOGF(msg, ...) GENERIC_LOGF(false, "DEBUG", msg, ##__VA_ARGS__)
@@ -52,15 +52,15 @@ class Logger {
   private:
     static SdManager *sdInst;
     static Loom_Hypnos *hypnosInst;
-    static char logFilePath[100];
 
     /**
-     * Generic log function - prints to Serial and logs to SD
+     * Write data to Serial or debug log file on SD
      *
+     * @param out Pointer to object data can be written to (Serial, File, etc.)
+     * @param log Log context and configuration
      * @param message The message we want to log
-     * @param silent Whether to print to the serial monitor
      */
-    static void log(char *message, bool silent);
+    static void log(Print *out, LogContext *log, const char *message);
 
   public:
     /**
@@ -78,8 +78,8 @@ class Logger {
      * definition.
      * @param msg Log message to write.
      */
-    static void genericLog(LogContext log, const __FlashStringHelper *msg);
-    static void genericLog(LogContext log, const char *msg);
+    static void genericLog(LogContext *log, const __FlashStringHelper *msg);
+    static void genericLog(LogContext *log, const char *msg);
 
     /**
      * Truncate the __FILE__ output to just show the name instead of the whole
