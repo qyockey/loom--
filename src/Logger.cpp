@@ -47,19 +47,19 @@ void Logger::genericLog(LogContext *log, const char *msg) {
     }
 }
 
-const char *Logger::getFileBasename(const char *full_path) {
+const char *Logger::getFileBasename(const char *fullPath) {
     // Check if directory separator is backslash
-    const char *basename = strrchr(full_path, '\\');
+    const char *basename = strrchr(fullPath, '\\');
     if (basename != nullptr) {
         return basename + 1; // Skip '\\' character
     }
 
     // Check if directory separator is forward slash
-    basename = strrchr(full_path, '/');
+    basename = strrchr(fullPath, '/');
     if (basename != nullptr) {
         return basename + 1; // Skip '/' character
     }
 
     // Default return full file path
-    return full_path;
+    return fullPath;
 }

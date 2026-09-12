@@ -85,5 +85,5 @@ class Logger {
      * Truncate the __FILE__ output to just show the name instead of the whole
      * path.  Expects dst to be at least as large as src.
      */
-    static const char *getFileBasename(const char *full_path);
+    static const char *getFileBasename(const char *fullPath);
 };
