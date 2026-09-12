@@ -42,9 +42,7 @@ struct LogContext {
 #define ERRORF(msg, ...) GENERIC_LOGF(false, "ERROR", msg, ##__VA_ARGS__)
 
 /**
- * Arduino Logger class that allows for standardized log outputs as well as
- * function memory usage summaries to find memory leaks that may lead to
- * unexpected crashing
+ * Arduino Logger class that allows for standardized log outputs
  *
  * @author Will Richards
  */
