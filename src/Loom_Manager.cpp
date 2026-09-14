@@ -7,20 +7,25 @@
 
 // Constructor
 Manager::Manager(
-    struct PacketData *packet,
+    struct PacketMetadata *metadata,
     const char *devName,
     uint32_t instanceNum,
     HypnosVersion hypnosVersion
 ) :
     deviceName(devName),
     instanceNumber(instanceNum),
+    packetNumber(&metadata->packetNumber),
+    rtcExternal(&metadata->timestamp),
     sd((uint8_t) hypnosVersion, deviceName) {
-
-    numRegisteredModules = 0;
-    this->packet = packet;
 
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
+
+    numRegisteredModules = 0;
+    this->packetNumber = packetNumber;
+
+    registerModule(&packetNumber);
+    registerModule(&rtcExternal);
 }
 
 // Append module to array
@@ -94,7 +99,6 @@ void Manager::initialize() {
 // Measure data from all modules
 void Manager::measure() {
     LOG("*** Measuring ***");
-    ++packet->number;
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->measure();
     }
@@ -102,13 +106,6 @@ void Manager::measure() {
 
 // Display data from all modules
 void Manager::displayData() {
-    Serial.printf(
-        "Packet:\n"
-        "    Number: %lu\n"
-        "\n",
-        packet->number
-    );
-
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->displayData();
     }

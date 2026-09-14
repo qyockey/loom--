@@ -6,6 +6,7 @@
 #include "Sensors/I2C/Loom_DS3231/Loom_DS3231.h"
 #include "Hardware/Loom_PowerRail/Loom_PowerRail.h"
 #include "Hardware/Loom_SdManager/SdManager.h"
+#include "Loom_PacketNumber.h"
 #include "Module.h"
 
 // Maximum number of modules the manager can manage
@@ -23,8 +24,9 @@
 #define LOOM_SERIAL_TIMEOUT_MS 20000U
 #endif
 
-struct PacketData {
-    uint32_t number;
+struct PacketMetadata {
+    struct PacketNumberData packetNumber;
+    struct DS3231Data timestamp;
 };
 
 /**
@@ -37,13 +39,13 @@ class Manager {
   public:
     /**
      * Constructs a new Manager
-     * @param packet Pointer to latest measured packet
+     * @param metadata Pointer to measured packet metadata structure
      * @param devName Device name to provided for logging purposes
      * @param instanceNum Instance number for logging purposes
-     * @param hypnosVersion Hypnos board version, controls SD chip select pin
+     * @param hypnosVersion Hypnos board version
      */
     Manager(
-        struct PacketData *packet,
+        struct PacketMetadata *metadata,
         const char *devName,
         uint32_t instanceNum,
         HypnosVersion hypnosVersion = HypnosVersion::V3_3
@@ -155,8 +157,9 @@ class Manager {
     const char *deviceName;
     uint32_t instanceNumber;
 
-    struct PacketData *packet;
+    struct ManagerData *managerData;
 
+    Loom_PacketNumber packetNumber;
     Loom_DS3231 rtcExternal;
 
     // List of modules that have been added to the stack
