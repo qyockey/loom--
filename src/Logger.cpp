@@ -24,7 +24,8 @@ void Logger::initialize(SdManager *sd, Loom_Hypnos *hypnos) {
 }
 
 void Logger::log(Print *out, LogContext *log, const char *msg) {
-    if (hypnosInst != nullptr) {
+    // Write time if available
+    if (hypnosInst != nullptr && hypnosInst->isRtcInitialized()) {
         out->printf("[%sZ] ", hypnosInst->getCurrentTimeUtc().text());
     }
 

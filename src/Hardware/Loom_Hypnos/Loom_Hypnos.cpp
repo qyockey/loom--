@@ -87,6 +87,8 @@ void Loom_Hypnos::initializeRtc() {
 
     LOG("DS3231 real-time clock initialized successfully!");
     LOGF("UTC time now: %s", rtcExternal.now().text());
+
+    rtcInitialized = true;
 }
 
 DateTime Loom_Hypnos::getCurrentTimeUtc() {

@@ -127,6 +127,8 @@ class Loom_Hypnos : public Module {
      */
     DateTime getCurrentTimeUtc();
 
+    bool isRtcInitialized(void) { return rtcInitialized; }
+
   private:
 
     struct TimestampData *timestamp;
@@ -155,6 +157,7 @@ class Loom_Hypnos : public Module {
 
     RTC_DS3231 rtcExternal;
     void initializeRtc();
+    bool rtcInitialized = false;
 
     /* Prompt user for integer */
     int16_t serialReadInt(const char *prompt, int16_t min, int16_t max);
