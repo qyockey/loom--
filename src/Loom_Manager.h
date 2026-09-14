@@ -1,7 +1,6 @@
 #pragma once
 
 #include <cstdint>
-#include <OPEnS_RTC.h>
 
 #include "Sensors/I2C/Loom_DS3231/Loom_DS3231.h"
 #include "Hardware/Loom_PowerRail/Loom_PowerRail.h"
