@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <ArduinoLowPower.h>
 #include <cstdint>
 
 #include "Loom_Manager.h"
