@@ -5,7 +5,7 @@
 #include <cstring>
 
 #include "Sensors/I2C/Loom_DS3231/Loom_DS3231.h"
-#include "Hardware/Loom_Hypnos/SdManager.h"
+#include "Hardware/Loom_SdManager/SdManager.h"
 
 #define OUTPUT_SIZE 2000U
 
