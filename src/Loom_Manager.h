@@ -3,7 +3,8 @@
 #include <cstdint>
 #include <OPEnS_RTC.h>
 
-#include "Hardware/Loom_Hypnos/Loom_Hypnos.h"
+#include "Sensors/I2C/Loom_DS3231/Loom_DS3231.h"
+#include "Hardware/Loom_PowerRail/Loom_PowerRail.h"
 #include "Hardware/Loom_Hypnos/SdManager.h"
 #include "Module.h"
 
@@ -62,6 +63,26 @@ class Manager {
      * @param timeoutMillis Maximum time to wait in milliseconds
      */
     void beginSerial(uint64_t timeoutMillis = LOOM_SERIAL_TIMEOUT_MS);
+
+    /**
+     * Set the configuration for the power rails when waking up from sleep
+     *
+     * NOTE: 3V rail should always be on while awake.
+     * Because the 3V rail pulls up SDA and SCL, any attempted I2C transmission
+     * while the rail is off will fail and cause the device to hang.
+     * This should not be a problem under normal circumstances.
+     *
+     * @param config The desired configuration while the device is awake
+     * See namespace RailState in Loom_PowerRail.h.
+     */
+    void setWakeConfiguration(struct PowerRailConfig config);
+
+    /**
+     * Set the configuration for the power rails when going to sleep
+     * @param config The desired configuration while the device is asleep
+     * See namespace RailState in Loom_PowerRail.h.
+     */
+    void setSleepConfiguration(struct PowerRailConfig config);
 
     /**
      * Calls the initialization function on all added modules
@@ -136,14 +157,17 @@ class Manager {
 
     struct PacketData *packet;
 
-    SdManager sd;
-    void writeCsvHeader();
+    Loom_DS3231 rtcExternal;
 
     // List of modules that have been added to the stack
     Module *modules[LOOM_MAX_MODULES];
 
     // Number of modules registered for measurement
     uint8_t numRegisteredModules;
+
+    Loom_PowerRail rails;
+    SdManager sd;
+    void writeCsvHeader();
 
     // Serial number unique to device
     void readSerialNum();

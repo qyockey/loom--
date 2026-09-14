@@ -4,7 +4,7 @@
 #include <cstdio>
 #include <cstring>
 
-#include "Hardware/Loom_Hypnos/Loom_Hypnos.h"
+#include "Sensors/I2C/Loom_DS3231/Loom_DS3231.h"
 #include "Hardware/Loom_Hypnos/SdManager.h"
 
 #define OUTPUT_SIZE 2000U
@@ -51,7 +51,7 @@ struct LogContext {
 class Logger {
   private:
     static SdManager *sdInst;
-    static Loom_Hypnos *hypnosInst;
+    static Loom_DS3231 *rtcInst;
     static char logFilePath[100];
 
     /**
@@ -65,12 +65,12 @@ class Logger {
   public:
     /**
      * Initialize Logger with objects to fulfill logging functionality.
-     * SD manager provides logging to file, Hypnos adds timestamp to log
+     * SD manager provides logging to file, RTC adds timestamp to log
      * message.
      * @param sd Pointer to SD Manager instance
      * @param hypnos Pointer to Hypnos instance
      */
-    static void initialize(SdManager *sd = nullptr, Loom_Hypnos *hypnos = nullptr);
+    static void initialize(SdManager *sd = nullptr, Loom_DS3231 *rtc = nullptr);
 
     /**
      * Write log message.

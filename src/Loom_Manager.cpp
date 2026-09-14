@@ -54,16 +54,40 @@ void Manager::beginSerial(uint64_t timeoutMillis) {
     digitalWrite(LED_BUILTIN, HIGH);
 }
 
+void Manager::setWakeConfiguration(struct PowerRailConfig config) {
+    if (config.rail_3v == RAIL_3V_OFF) {
+        WARNING(
+            "Disabling 3V rail while awake is likely a mistake.  "
+            "Because the 3V rail controls the I2C and SPI communication lines, "
+            "attempting to communicate on these buses will result in an  "
+            "invalid state that will cause the processor to hang."
+        );
+    }
+    rails.setWakeConfiguration(config);
+}
+
+/**
+ * Set the configuration for the power rails when going to sleep
+ * @param config The desired configuration while the device is asleep
+ * See namespace RailState in Loom_PowerRail.h.
+ */
+void Manager::setSleepConfiguration(struct PowerRailConfig config) {
+    rails.setSleepConfiguration(config);
+}
+
 // Initialize all modules
 void Manager::initialize() {
-    LOG("*** Initializing ***");
-    for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->initialize();
-    }
+    rails.initialize();
 
     sd.initialize();
     writeCsvHeader();
-    // Logger::initialize(sd, this);
+    Logger::initialize(&sd, &rtcExternal);
+
+    LOG("*** Initializing ***");
+
+    for (size_t i = 0; i < numRegisteredModules; i++) {
+        modules[i]->initialize();
+    }
 }
 
 // Measure data from all modules
@@ -125,28 +149,31 @@ void Manager::logToSd() {
 }
 
 void Manager::powerDown() {
+    SLOG("*** Powering Down ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->powerDown();
     }
 }
 
 void Manager::powerUp() {
+    SLOG("*** Powering Up ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->powerUp();
     }
 }
 
 void Manager::sleep(uint32_t millis, bool waitForSerial) {
+    /* Prepare peripherals for sleep */
+    powerDown();
+
     /* Allow time for message to get through before SD SPI bus loses power */
     LOG("Entering standby sleep");
     delay(50);
-
     Serial.end();
 
-    /* Prepare peripherals for sleep and set power rails to sleep
-     * configuration.  Since the SD card may have power disconnected, no logging
-     * allowed until power is restored. */
-    powerDown();
+    /* Since the SD card may have power disconnected, no logging
+     * allowed until power is restored.  Device will hang. */
+    rails.asleepMode();
 
     /* Enter low-power consumption deep-sleep state.
      * Microcontroller will do nothing until the alarm triggers. */
@@ -154,10 +181,8 @@ void Manager::sleep(uint32_t millis, bool waitForSerial) {
     LowPower.sleep(millis);
     digitalWrite(LED_BUILTIN, HIGH);
 
-    /* Wake peripherals from sleep and set power rails to awake
-     * configuration.  After this, SD power is restored and logging is allowed
-     * again. */
-    powerUp();
+    /* After this, SD power is restored and logging is allowed again. */
+    rails.awakeMode();
 
     /* We can log to SD card but Serial interface isn't ready yet */
     SLOG("Waking from sleep");
@@ -166,6 +191,9 @@ void Manager::sleep(uint32_t millis, bool waitForSerial) {
     uint64_t serialTimeout = waitForSerial ? 3000 : 0;
     beginSerial(serialTimeout);
     LOG("Serial monitor reattached");
+
+    /* Wake peripherals from sleep */
+    powerUp();
 }
 
 void Manager::readSerialNum() {

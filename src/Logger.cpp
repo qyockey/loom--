@@ -3,11 +3,11 @@
 #include <cstring>
 
 #include "Logger.h"
-#include "Hardware/Loom_Hypnos/Loom_Hypnos.h"
+#include "Sensors/I2C/Loom_DS3231/Loom_DS3231.h"
 #include "Hardware/Loom_Hypnos/SdManager.h"
 
 SdManager *Logger::sdInst = nullptr;
-Loom_Hypnos *Logger::hypnosInst = nullptr;
+Loom_DS3231 *Logger::rtcInst = nullptr;
 char Logger::logFilePath[100] = {};
 
 void Logger::log(char *message, bool silent) {
@@ -22,9 +22,9 @@ void Logger::log(char *message, bool silent) {
     }
 }
 
-void Logger::initialize(SdManager *sd, Loom_Hypnos *hypnos) {
+void Logger::initialize(SdManager *sd, Loom_DS3231 *rtc) {
     sdInst = sd;
-    hypnosInst = hypnos;
+    rtcInst = rtc;
 
     if (sd == nullptr) {
         WARNING("SD Manager instance is NULL, Logger cannot write to SD card");
@@ -44,11 +44,11 @@ void Logger::genericLog(LogContext log, const char *msg) {
     const char *activeFileBasename = getFileBasename(log.file);
 
     // Write time if available
-    if (hypnosInst != nullptr) {
+    if (rtcInst != nullptr) {
         traverse += snprintf_P(
             logMessage + traverse, OUTPUT_SIZE - traverse,
             PSTR("[%sZ] "),
-            hypnosInst->getCurrentTimeUtc().text()
+            rtcInst->getCurrentTimeUtc().text()
         );
     }
 
