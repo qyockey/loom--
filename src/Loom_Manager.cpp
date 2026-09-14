@@ -86,8 +86,8 @@ void Manager::initialize() {
     rails.initialize();
 
     sd.initialize();
-    writeCsvHeader();
     Logger::initialize(&sd, &rtcExternal);
+    writeCsvHeader();
 
     LOG("*** Initializing ***");
 
