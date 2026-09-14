@@ -24,6 +24,8 @@ void Loom_DS3231::initialize() {
 
     LOG("DS3231 real-time clock initialized successfully!");
     LOGF("UTC time now: %s", rtc.now().text());
+
+    initialized = true;
 }
 
 void Loom_DS3231::measure() {
@@ -61,6 +63,10 @@ void Loom_DS3231::writeCsvBody(File *csv) {
 }
 
 void Loom_DS3231::getCurrentTimeUtc(struct tm *timeUtc) {
+    if (!initialized) {
+        return;
+    }
+
     DateTime timeNowUtcDt = rtc.now();
     timeUtc->tm_sec = timeNowUtcDt.second();
     timeUtc->tm_min = timeNowUtcDt.minute();

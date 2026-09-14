@@ -38,11 +38,13 @@ class Loom_DS3231 : public Module {
      */
     void getCurrentTimeUtc(struct tm *tm);
 
+    bool isInitialized(void) { return initialized; }
+
   private:
     DS3231Data *timestamp;
 
     RTC_DS3231 rtc;
-    bool initialized;
+    bool initialized = false;
 
     void initializeRtc();
 

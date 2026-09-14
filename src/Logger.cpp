@@ -30,6 +30,10 @@ void Logger::initialize(SdManager *sd, Loom_DS3231 *rtc) {
         WARNING("SD Manager instance is NULL, Logger cannot write to SD card");
         WARNING("Log messages will appear ONLY on Serial termial");
     }
+
+    if (rtc == nullptr) {
+        WARNING("RTC instance is NULL, Logger cannot add timestamps");
+    }
 }
 
 void Logger::genericLog(LogContext log, const __FlashStringHelper *msg) {
@@ -44,11 +48,13 @@ void Logger::genericLog(LogContext log, const char *msg) {
     const char *activeFileBasename = getFileBasename(log.file);
 
     // Write time if available
-    if (rtcInst != nullptr) {
-        traverse += snprintf_P(
+    if (rtcInst != nullptr && rtcInst->isInitialized()) {
+        struct tm timeNowUtc;
+        rtcInst->getCurrentTimeUtc(&timeNowUtc);
+
+        traverse += strftime(
             logMessage + traverse, OUTPUT_SIZE - traverse,
-            PSTR("[%sZ] "),
-            rtcInst->getCurrentTimeUtc().text()
+            "[%Y-%m-%dT%H:%M:%SZ] ", &timeNowUtc
         );
     }
 
