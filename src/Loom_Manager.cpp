@@ -16,7 +16,7 @@ Manager::Manager(
     instanceNumber(instanceNum),
     packetNumber(&metadata->packetNumber),
     rtcExternal(&metadata->timestamp),
-    sd((uint8_t) hypnosVersion, deviceName) {
+    sd(hypnosVersion, deviceName) {
 
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);

@@ -10,6 +10,12 @@
 #define SD_DEVICE_MAX 32U
 
 /**
+ * Tracks the hypnos version and matches the version with the correct chip
+ * select pin
+ */
+enum HypnosVersion { V3_2 = 10U, V3_3 = 11U, ADALOGGER = 4U };
+
+/**
  * Class used to manage interaction with SD card read/write on the Hypnos board
  *
  * @author Will Richards
@@ -19,10 +25,10 @@ class SdManager {
     /**
      * SDManager Constructor
      *
-     * @param pinChipSelect SPI chip select pin for the SD card module
+     * @param hypnosVersion Version of hypnos board in use
      * @param deviceName Name of device in manager
      */
-    SdManager(uint8_t pinChipSelect, const char *deviceName);
+    SdManager(HypnosVersion hypnosVersion, const char *deviceName);
 
     /**
      * Initialize the SD card

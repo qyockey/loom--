@@ -1,8 +1,8 @@
 #include "SdManager.h"
 #include "Logger.h"
 
-SdManager::SdManager(uint8_t pinChipSelect, const char *deviceName)
-    :pinChipSelect(pinChipSelect) {
+SdManager::SdManager(HypnosVersion hypnosVersion, const char *deviceName) {
+    pinChipSelect = (uint8_t) hypnosVersion;
     strncpy(SdManager::deviceName, deviceName, SD_DEVICE_MAX);
 }
 
