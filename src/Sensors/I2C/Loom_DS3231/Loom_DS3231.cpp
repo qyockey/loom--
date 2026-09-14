@@ -73,7 +73,7 @@ void Loom_DS3231::getCurrentTimeUtc(struct tm *timeUtc) {
     timeUtc->tm_hour = timeNowUtcDt.hour();
     timeUtc->tm_mday = timeNowUtcDt.day();
     timeUtc->tm_mon = timeNowUtcDt.month() - 1;
-    timeUtc->tm_year = timeNowUtcDt.year();
+    timeUtc->tm_year = timeNowUtcDt.year() - 1900;
 }
 
 int16_t Loom_DS3231::serialReadInt(const char *prompt, int16_t min, int16_t max) {
