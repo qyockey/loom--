@@ -56,6 +56,8 @@ void Manager::beginSerial(uint64_t timeoutMillis) {
 
 // Initialize all modules
 void Manager::initialize() {
+    /* NOT WORKING! Need 3V power rail enabled first! */
+
     LOG("*** Initializing ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->initialize();
