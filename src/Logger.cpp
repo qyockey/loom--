@@ -34,7 +34,7 @@ void Logger::log(Print *out, LogContext *log, const char *msg) {
         log->level, getFileBasename(log->file), log->func, log->lineNum, msg
     );
 
-    out->print(msg);
+    out->println(msg);
 }
 
 void Logger::genericLog(LogContext *log, const char *msg) {
