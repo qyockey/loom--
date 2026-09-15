@@ -8,19 +8,6 @@
 
 SdManager *Logger::sdInst = nullptr;
 Loom_DS3231 *Logger::rtcInst = nullptr;
-char Logger::logFilePath[100] = {};
-
-void Logger::log(char *message, bool silent) {
-    // If we want to actually print to serial
-    if (!silent && Serial) {
-        Serial.println(message);
-    }
-
-    // Log as long as we have given it a SD card instance
-    if (sdInst != nullptr) {
-        Logger::sdInst->writeDebugLine(message);
-    }
-}
 
 void Logger::initialize(SdManager *sd, Loom_DS3231 *rtc) {
     sdInst = sd;
@@ -36,51 +23,52 @@ void Logger::initialize(SdManager *sd, Loom_DS3231 *rtc) {
     }
 }
 
-void Logger::genericLog(LogContext log, const __FlashStringHelper *msg) {
-    char buf[OUTPUT_SIZE];
-    strncpy_P(buf, (const char *)msg, OUTPUT_SIZE);
-    genericLog(log, buf);
-}
-
-void Logger::genericLog(LogContext log, const char *msg) {
-    char logMessage[OUTPUT_SIZE];
-    int traverse = 0;
-    const char *activeFileBasename = getFileBasename(log.file);
-
+void Logger::log(Print *out, LogContext *log, const char *msg) {
     // Write time if available
     if (rtcInst != nullptr && rtcInst->isInitialized()) {
         struct tm timeNowUtc;
         rtcInst->getCurrentTimeUtc(&timeNowUtc);
 
-        traverse += strftime(
-            logMessage + traverse, OUTPUT_SIZE - traverse,
+        char timeBuf[24];
+        strftime(
+            timeBuf, sizeof(timeBuf),
             "[%Y-%m-%dT%H:%M:%SZ] ", &timeNowUtc
         );
+        out->write(timeBuf, sizeof(timeBuf));
     }
 
-    // Append context and message
-    traverse += snprintf_P(
-        logMessage + traverse, OUTPUT_SIZE - traverse,
-        PSTR("[%s] [%s:%s:%lu] %s"),
-        log.level, activeFileBasename, log.func, log.lineNum, msg
+    out->printf(
+        "[%s] [%s:%s:%lu] ",
+        log->level, getFileBasename(log->file), log->func, log->lineNum, msg
     );
 
-    Logger::log(logMessage, log.silent);
+    out->println(msg);
 }
 
-const char *Logger::getFileBasename(const char *full_path) {
-    // Check if directory separator is backslash
-    const char *basename = strrchr(full_path, '\\');
+void Logger::genericLog(LogContext *log, const char *msg) {
+    if (Serial && !log->silent) {
+        Logger::log(&Serial, log, msg);
+    }
+
+    if (sdInst != nullptr && sdInst->isInitialized()) {
+        File *logFile = sdInst->getLogFile();
+        Logger::log(logFile, log, msg);
+    }
+}
+
+const char *Logger::getFileBasename(const char *fullPath) {
+    // Check if directory separator is backslash (compiled on Windows)
+    const char *basename = strrchr(fullPath, '\\');
     if (basename != nullptr) {
         return basename + 1; // Skip '\\' character
     }
 
-    // Check if directory separator is forward slash
-    basename = strrchr(full_path, '/');
+    // Check if directory separator is forward slash (compiled on Linux/Mac)
+    basename = strrchr(fullPath, '/');
     if (basename != nullptr) {
         return basename + 1; // Skip '/' character
     }
 
-    // Default return full file path
-    return full_path;
+    // No directory separators present
+    return fullPath;
 }

@@ -147,14 +147,14 @@ void Manager::logToSd() {
 }
 
 void Manager::powerDown() {
-    SLOG("*** Powering Down ***");
+    LOG("*** Powering Down ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->powerDown();
     }
 }
 
 void Manager::powerUp() {
-    SLOG("*** Powering Up ***");
+    LOG("*** Powering Up ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->powerUp();
     }
