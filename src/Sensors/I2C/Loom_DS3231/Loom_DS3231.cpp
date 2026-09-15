@@ -32,12 +32,18 @@ void Loom_DS3231::measure() {
     getCurrentTimeUtc(&timestamp->timeUtc);
 }
 
+char *Loom_DS3231::isoFormat(struct tm *tm) {
+    static char timeBuf[TIME_SIZE];
+    strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%dT%H:%M:%SZ", tm);
+    return timeBuf;
+}
+
 void Loom_DS3231::displayData() {
     Serial.printf(
         "DS3231:\n"
-    //     "    Time UTC: %s\n"
-        "\n"
-    //     timestamp->timeUtc
+        "    Time UTC: %s\n"
+        "\n",
+        isoFormat(&timestamp->timeUtc)
     );
 }
 
@@ -50,16 +56,17 @@ void Loom_DS3231::writeCsvHeader2(File *csv) {
 }
 
 void Loom_DS3231::writeCsvBody(File *csv) {
-    (void) csv;
-    // /* Skip 'Z' character at end of string */
-    // char utcWithoutZorT[TIME_SIZE - 1];
-    // strncpy(utcWithoutZorT, timestamp->timeUtc, TIME_SIZE - 2);
-    // utcWithoutZorT[TIME_SIZE - 2] = '\0';
+    char *utcIsoFormat = isoFormat(&timestamp->timeUtc);
 
-    // /* Overwrite 'T' character since Excel doesn't like it */
-    // utcWithoutZorT[10] = ' ';
+    /* Skip 'Z' character at end of string */
+    char utcWithoutZorT[TIME_SIZE - 1];
+    strncpy(utcWithoutZorT, utcIsoFormat, TIME_SIZE - 2);
+    utcWithoutZorT[TIME_SIZE - 2] = '\0';
 
-    // csv->printf("%s,", utcWithoutZorT);
+    /* Overwrite 'T' character since Excel doesn't like it */
+    utcWithoutZorT[10] = ' ';
+
+    csv->printf("%s,", utcWithoutZorT);
 }
 
 void Loom_DS3231::getCurrentTimeUtc(struct tm *timeUtc) {
@@ -74,6 +81,12 @@ void Loom_DS3231::getCurrentTimeUtc(struct tm *timeUtc) {
     timeUtc->tm_mday = timeNowUtcDt.day();
     timeUtc->tm_mon = timeNowUtcDt.month() - 1;
     timeUtc->tm_year = timeNowUtcDt.year() - 1900;
+}
+
+char *Loom_DS3231::getCurrentTimeUtcIsoFormat(void) {
+    struct tm timeNowUtc;
+    getCurrentTimeUtc(&timeNowUtc);
+    return isoFormat(&timeNowUtc);
 }
 
 int16_t Loom_DS3231::serialReadInt(const char *prompt, int16_t min, int16_t max) {

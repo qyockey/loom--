@@ -38,6 +38,12 @@ class Loom_DS3231 : public Module {
      */
     void getCurrentTimeUtc(struct tm *tm);
 
+    /**
+     * Get ISO-8601 representation (YYYY-MM-DDTHH:MM:SSZ) of current UTC time
+     * @return Pointer to static buffer containing ISO formatted time string
+     */
+    char *getCurrentTimeUtcIsoFormat(void);
+
     bool isInitialized(void) { return initialized; }
 
   private:
@@ -47,6 +53,13 @@ class Loom_DS3231 : public Module {
     bool initialized = false;
 
     void initializeRtc();
+
+    /**
+     * Get ISO-8601 representation (YYYY-MM-DDTHH:MM:SSZ) of time structure
+     * @param tm Time structure.  See time.h.
+     * @return Pointer to static buffer containing ISO formatted time string
+     */
+    char *isoFormat(struct tm *tm);
 
     /* Prompt user for integer */
     int16_t serialReadInt(const char *prompt, int16_t min, int16_t max);

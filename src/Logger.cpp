@@ -26,15 +26,7 @@ void Logger::initialize(SdManager *sd, Loom_DS3231 *rtc) {
 void Logger::log(Print *out, LogContext *log, const char *msg) {
     // Write time if available
     if (rtcInst != nullptr && rtcInst->isInitialized()) {
-        struct tm timeNowUtc;
-        rtcInst->getCurrentTimeUtc(&timeNowUtc);
-
-        char timeBuf[24];
-        strftime(
-            timeBuf, sizeof(timeBuf),
-            "[%Y-%m-%dT%H:%M:%SZ] ", &timeNowUtc
-        );
-        out->write(timeBuf, sizeof(timeBuf));
+        out->printf("[%s] ", rtcInst->getCurrentTimeUtcIsoFormat());
     }
 
     out->printf(
