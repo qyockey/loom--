@@ -45,6 +45,7 @@ void Logger::genericLog(LogContext *log, const char *msg) {
     if (sdInst != nullptr && sdInst->isInitialized()) {
         File *logFile = sdInst->getLogFile();
         Logger::log(logFile, log, msg);
+        logFile->close();
     }
 }
 
