@@ -29,6 +29,8 @@ class SdManager {
      */
     bool initialize();
 
+    bool isInitialized(void) { return initialized; }
+
     /**
      * Get pointer to debug log file
      * Be sure to call logFile->close() when you're done with it

@@ -42,7 +42,7 @@ void Logger::genericLog(LogContext *log, const char *msg) {
         Logger::log(&Serial, log, msg);
     }
 
-    if (sdInst != nullptr) {
+    if (sdInst != nullptr && sdInst->isInitialized()) {
         File *logFile = sdInst->getLogFile();
         Logger::log(logFile, log, msg);
     }
