@@ -40,7 +40,7 @@ void SdManager::openFile(File *file, const char *path) {
 
     if (!initialized) {
         Serial.printf(
-            "[ERROR] SD Card not initialized, cannot write to file %s\n",
+            "[ERROR] SD Card not initialized, cannot open file %s\n",
             path
         );
         return;
