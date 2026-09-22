@@ -36,11 +36,9 @@ void Loom_Analog::displayData() {
 
 /* Convert ADC code to voltage in millivolts */
 uint16_t Loom_Analog::analogToMV(uint16_t analogCode) {
-    float vrefFraction = analogCode / (float)ADC_MAX_CODE;
-    float pinVoltage = vrefFraction * ADC_VREF;
-
-    /* Convert from volts to millivolts */
-    return (uint16_t) (pinVoltage * 1000.0F);
+    return (uint16_t) (
+        ((uint32_t) analogCode * (uint32_t) ADC_VREF_MV) / ADC_MAX_CODE
+    );
 }
 
 void Loom_Analog::writeCsvHeader1(File *csv) {

@@ -7,7 +7,7 @@
 #define PIN_VBAT 7U
 #define ADC_RESOLUTION_BITS 12
 #define ADC_MAX_CODE ((1 << ADC_RESOLUTION_BITS) - 1)
-#define ADC_VREF 3.3F
+#define ADC_VREF_MV 3300
 
 struct AnalogPinData {
     uint8_t number;
