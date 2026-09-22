@@ -81,12 +81,47 @@ void Manager::setSleepConfiguration(struct PowerRailConfig config) {
     rails.setSleepConfiguration(config);
 }
 
+void Manager::logResetCause() {
+    /* RCAUSE register sets flag to indicate cause of last reset.
+     * See datasheet section 15.8.14 and
+     * packages/arduino/tools/CMSIS-Atmel/1.2.0/CMSIS/Device/ATMEL/samd21/include/component/pm.h
+     */
+    uint8_t reset_cause = PM->RCAUSE.reg;
+
+    if (reset_cause & PM_RCAUSE_POR) {
+        LOG("Reset cause: Power-on");
+    }
+    if (reset_cause & PM_RCAUSE_BOD12) {
+        LOG("Reset cause: 1.2V brown-out");
+    }
+    if (reset_cause & PM_RCAUSE_BOD33) {
+        LOG("Reset cause: 3.3V brown-out");
+    }
+    if (reset_cause & PM_RCAUSE_EXT) {
+        LOG("Reset cause: External (button)");
+    }
+    if (PM->RCAUSE.reg & PM_RCAUSE_WDT) {
+        LOG("Reset cause: Watchdog timeout");
+    }
+    if (reset_cause & PM_RCAUSE_SYST) {
+        LOG("Reset cause: System reset request");
+    }
+
+    if (reset_cause == 0) {
+        ERROR("No reset cause listed");
+    }
+    /* Trick: check if multiple bits are set */
+    if (reset_cause & (reset_cause - 1)) {
+        WARNING("Multiple reset causes listed");
+    }
+}
+
 // Initialize all modules
 void Manager::initialize() {
     rails.initialize();
-
     sd.initialize();
     Logger::initialize(&sd, &rtcExternal);
+    logResetCause();
     writeCsvHeader();
 
     LOG("*** Initializing ***");
