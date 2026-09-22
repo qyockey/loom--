@@ -2,7 +2,7 @@
 
 #include <Adafruit_seesaw.h>
 
-#include "Module.h"
+#include "Modules/Module.h"
 
 struct StemmaData {
     uint8_t temperatureC;

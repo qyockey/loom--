@@ -4,8 +4,6 @@
 #include <SPI.h>
 #include <SdFat.h>
 
-#include "Module.h"
-
 #define SD_PATH_MAX 256U
 #define SD_DEVICE_MAX 32U
 

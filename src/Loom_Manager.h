@@ -2,11 +2,11 @@
 
 #include <cstdint>
 
-#include "Sensors/I2C/Loom_DS3231/Loom_DS3231.h"
+#include "Modules/I2C/Loom_DS3231/Loom_DS3231.h"
 #include "Hardware/Loom_PowerRail/Loom_PowerRail.h"
 #include "Hardware/Loom_SdManager/SdManager.h"
-#include "Loom_PacketNumber.h"
-#include "Module.h"
+#include "Modules/Module.h"
+#include "Modules/Loom_PacketNumber.h"
 
 // Maximum number of modules the manager can manage
 #ifndef LOOM_MAX_MODULES
@@ -151,6 +151,13 @@ class Manager {
      * Reinitialize modules after power restored
      */
     void powerUp();
+
+    /**
+     * Log the cause of the latest reset.  Options: power on, 1.2V brown-out,
+     * 3.3V brown-out, external trigger (button), watchdog timeout, and system
+     * reset request.
+     */
+    void logResetCause();
 
     // Name and instance of the device
     const char *deviceName;

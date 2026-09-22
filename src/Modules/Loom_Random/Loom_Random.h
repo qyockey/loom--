@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Module.h"
+#include "Modules/Module.h"
 
 struct RandomData {
     uint8_t value;
