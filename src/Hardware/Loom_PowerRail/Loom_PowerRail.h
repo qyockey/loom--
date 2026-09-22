@@ -2,8 +2,6 @@
 
 #include <Arduino.h>
 
-#include "Module.h"
-
 /* Pins on the Feather used to control Hypnos features */
 #define PIN_RAIL_3V 5U
 #define PIN_RAIL_5V 6U

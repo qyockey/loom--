@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#include "Module.h"
+#include "Modules/Module.h"
 
 #define PIN_VBAT 7U
 #define ADC_RESOLUTION_BITS 12

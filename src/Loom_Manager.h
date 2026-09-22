@@ -2,11 +2,11 @@
 
 #include <cstdint>
 
-#include "Sensors/I2C/Loom_DS3231/Loom_DS3231.h"
+#include "Modules/I2C/Loom_DS3231/Loom_DS3231.h"
 #include "Hardware/Loom_PowerRail/Loom_PowerRail.h"
 #include "Hardware/Loom_SdManager/SdManager.h"
-#include "Loom_PacketNumber.h"
-#include "Module.h"
+#include "Modules/Module.h"
+#include "Modules/Loom_PacketNumber.h"
 
 // Maximum number of modules the manager can manage
 #ifndef LOOM_MAX_MODULES

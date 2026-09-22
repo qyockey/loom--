@@ -2,7 +2,7 @@
 
 #include <Arduino.h>
 
-#include "Module.h"
+#include "Modules/Module.h"
 
 struct DigitalPinData {
     uint8_t number;

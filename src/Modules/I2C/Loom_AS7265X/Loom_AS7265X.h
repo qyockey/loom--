@@ -2,7 +2,7 @@
 
 #include <SparkFun_AS7265X.h>
 
-#include "Module.h"
+#include "Modules/Module.h"
 
 struct AS7265XData {
     uint16_t uv[6];    // Measured UV bands values. Units: counts / (μW/cm^2)
