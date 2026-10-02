@@ -1,9 +1,10 @@
 #include <Arduino.h>
-#include <ArduinoLowPower.h>
 #include <cstdint>
 
 #include "Loom_Manager.h"
 #include "Logger.h"
+#include "Hardware/Loom_RTC/Loom_RTC.h"
+#include "Hardware/Loom_Sleep/Loom_Sleep.h"
 
 // Constructor
 Manager::Manager(
@@ -125,6 +126,7 @@ void Manager::initialize() {
     writeCsvHeader();
 
     LOG("*** Initializing ***");
+    Loom_RTC::initialize();
 
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->initialize();
@@ -211,7 +213,8 @@ void Manager::sleep(uint32_t millis, bool waitForSerial) {
     /* Enter low-power consumption deep-sleep state.
      * Microcontroller will do nothing until the alarm triggers. */
     digitalWrite(LED_BUILTIN, LOW);
-    LowPower.sleep(millis);
+    Loom_RTC::setAlarm(millis);
+    Loom_Sleep::sleep();
     digitalWrite(LED_BUILTIN, HIGH);
 
     /* After this, SD power is restored and logging is allowed again. */
