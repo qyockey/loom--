@@ -6,7 +6,7 @@
 #include "Hardware/Loom_PowerRail/Loom_PowerRail.h"
 #include "Hardware/Loom_SdManager/SdManager.h"
 #include "Modules/Module.h"
-#include "Modules/Loom_PacketNumber.h"
+#include "Modules/Loom_PacketNumber/Loom_PacketNumber.h"
 
 // Maximum number of modules the manager can manage
 #ifndef LOOM_MAX_MODULES

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Module.h"
+#include "Modules/Module.h"
 
 struct PacketNumberData {
     uint32_t number;
