@@ -57,7 +57,7 @@ void Manager::beginSerial(uint64_t timeoutMillis) {
     while (!Serial && millis() - startMillis < timeoutMillis) {
         // Flash LED as visual indicator of waiting
         digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
-        delay(100);
+        pause(100);
     }
     digitalWrite(LED_BUILTIN, HIGH);
 }
