@@ -5,6 +5,7 @@
 #include "Logger.h"
 #include "Hardware/Loom_RTC/Loom_RTC.h"
 #include "Hardware/Loom_Sleep/Loom_Sleep.h"
+#include "Interrupt/Loom_Interrupt.h"
 
 // Constructor
 Manager::Manager(
@@ -119,6 +120,7 @@ void Manager::logResetCause() {
 
 // Initialize all modules
 void Manager::initialize() {
+    Loom_Interrupt::initialize();
     rails.initialize();
     sd.initialize();
     Logger::initialize(&sd, &rtcExternal);
