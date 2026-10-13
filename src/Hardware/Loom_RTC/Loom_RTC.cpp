@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "Loom_RTC.h"
+#include "Interrupt/Loom_Interrupt.h"
 
 bool Loom_RTC::initialized = false;
 void (*Loom_RTC::callback)(void) = nullptr;
@@ -93,4 +94,7 @@ void RTC_Handler(void) {
 
     /* Clear interrupt pending flag */
     RTC->MODE0.INTFLAG.bit.CMP0 = 1;
+
+    /* Set interrupt cause */
+    Loom_Interrupt::setPending(INTERRUPT_RTC_INTERNAL);
 }
