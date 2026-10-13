@@ -28,6 +28,11 @@ struct PacketMetadata {
     struct DS3231Data timestamp;
 };
 
+enum AlarmSource {
+    ALARM_RTC_INTERNAL,
+    ALARM_RTC_EXTERNAL,
+};
+
 /**
  * Unifies all the various sensors to allow for collection in unison
  * This class manages the JSON document store of all sensor information
@@ -106,16 +111,31 @@ class Manager {
     void logToSd();
 
     /**
-     * Drops the Feather M0 and Hypnos board into a low power sleep waiting for
-     * an interrupt to wake it up and pull it out of sleep.
-     * This is much more power efficient for long delays than calling
-     * manager.pause()
-     * @param millis The time that will elapse before the device is woken by
-     * the RTC
-     * @param waitForSerial Whether to still execution until Serial monitor
-     * reconnects after powering up.  This takes about 2 seconds.
+     * @param source Source of alarm: builtin RTC or external DS3231 RTC
+     * @param millis Time until source asserts alarm
      */
-    void sleep(uint32_t millis, bool waitForSerial = false);
+    void setAlarm(enum AlarmSource source, uint32_t millis);
+
+    /**
+     * Drops the Feather M0 and Hypnos board into a low power sleep waiting for
+     * an interrupt to wake it up and pull it out of sleep.  This is much more
+     * power efficient for long delays than calling manager.pause().  Ensure
+     * that an alarm is set prior to calling this function, otherwise the device
+     * won't wake up.
+     */
+    void sleep();
+
+    /**
+     * Clean up modules before cutting power
+     */
+    void powerDown();
+
+    /**
+     * Reinitialize modules after power restored
+     * @param waitForSerial Whether to still execution until Serial monitor
+     * reconnects after powering up.  This takes about 3 seconds.
+     */
+    void powerUp(bool waitForSerial = false);
 
     /**
      * Gets the current device name set by the user
@@ -142,16 +162,6 @@ class Manager {
     void pause(const uint32_t ms) const;
 
   private:
-    /**
-     * Clean up modules before cutting power
-     */
-    void powerDown();
-
-    /**
-     * Reinitialize modules after power restored
-     */
-    void powerUp();
-
     /**
      * Log the cause of the latest reset.  Options: power on, 1.2V brown-out,
      * 3.3V brown-out, external trigger (button), watchdog timeout, and system

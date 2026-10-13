@@ -186,52 +186,59 @@ void Manager::logToSd() {
 }
 
 void Manager::powerDown() {
+    /* Power down peripherals */
     LOG("*** Powering Down ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         modules[i]->powerDown();
     }
-}
-
-void Manager::powerUp() {
-    LOG("*** Powering Up ***");
-    for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->powerUp();
-    }
-}
-
-void Manager::sleep(uint32_t millis, bool waitForSerial) {
-    /* Prepare peripherals for sleep */
-    powerDown();
-
-    /* Allow time for message to get through before SD SPI bus loses power */
-    LOG("Entering standby sleep");
-    delay(50);
-    Serial.end();
 
     /* Since the SD card may have power disconnected, no logging
      * allowed until power is restored.  Device will hang. */
     rails.asleepMode();
 
+    /* Turn off LED to indicate low power mode */
+    digitalWrite(LED_BUILTIN, LOW);
+}
+
+void Manager::setAlarm(enum AlarmSource source, uint32_t millis) {
+    switch (source) {
+
+        case ALARM_RTC_INTERNAL:
+            Loom_RTC::setAlarm(millis);
+            break;
+
+        case ALARM_RTC_EXTERNAL:
+            // TODO Add alarm to DS3231
+            // TimeSpan alarmSpan = millis / 1000;
+            // DateTime alarmTime = rtcExternal.now() + alarmSpan;
+            // rtcExternal.setAlarm(alarmTime);
+            break;
+    }
+}
+
+void Manager::sleep() {
     /* Enter low-power consumption deep-sleep state.
      * Microcontroller will do nothing until the alarm triggers. */
-    digitalWrite(LED_BUILTIN, LOW);
-    Loom_RTC::setAlarm(millis);
     Loom_Sleep::sleep();
+}
+
+void Manager::powerUp(bool waitForSerial) {
+    /* Turn on LED to indicate device awake */
     digitalWrite(LED_BUILTIN, HIGH);
 
     /* After this, SD power is restored and logging is allowed again. */
     rails.awakeMode();
-
-    /* We can log to SD card but Serial interface isn't ready yet */
-    SLOG("Waking from sleep");
 
     /* Allow time for Serial connection to establish with computer */
     uint64_t serialTimeout = waitForSerial ? 3000 : 0;
     beginSerial(serialTimeout);
     LOG("Serial monitor reattached");
 
-    /* Wake peripherals from sleep */
-    powerUp();
+    /* Power up peripherals */
+    LOG("*** Powering Up ***");
+    for (size_t i = 0; i < numRegisteredModules; i++) {
+        modules[i]->powerUp();
+    }
 }
 
 void Manager::readSerialNum() {
