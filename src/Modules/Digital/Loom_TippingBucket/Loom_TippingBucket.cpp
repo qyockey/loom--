@@ -14,8 +14,6 @@ volatile bool Loom_TippingBucket::overflow;
 volatile struct TippingBucketData *Loom_TippingBucket::data;
 uint32_t Loom_TippingBucket::debounceMillis;
 
-/* FIXME: A ghost tip is counted in the next sleep cycle if two tips are counted
- * in the current cycle...? */
 void Loom_TippingBucket::tipDetect(void) {
     Loom_Interrupt::setPending(INTERRUPT_TIPPING_BUCKET);
 }
