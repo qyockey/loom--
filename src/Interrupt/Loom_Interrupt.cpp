@@ -39,6 +39,10 @@ void Loom_Interrupt::initialize() {
     enableSleepOcillator();
 }
 
+bool Loom_Interrupt::anyPending() {
+    return (enabled & pending) != 0;
+}
+
 bool Loom_Interrupt::isPending(uint8_t source) {
     return (enabled & pending & source) != 0;
 }

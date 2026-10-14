@@ -22,6 +22,9 @@ class Loom_Interrupt {
   public:
     static void initialize(void);
 
+    /* Check if any interrupt is marked as pending */
+    static bool anyPending(void);
+
     /* Check if interrupt is marked as pending */
     static bool isPending(uint8_t source);
 
