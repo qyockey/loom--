@@ -49,8 +49,6 @@ Loom_TippingBucket::Loom_TippingBucket(
     this->pin = pin;
 }
 
-#include "Logger.h"
-
 void Loom_TippingBucket::initialize() {
     for (uint8_t i = 0; i < LOOM_MAX_HOURLY_TIPS; i++) {
         timestamps[i] = 0;
