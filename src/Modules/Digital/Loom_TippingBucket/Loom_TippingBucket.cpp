@@ -42,11 +42,17 @@ void Loom_TippingBucket::tipHandle(void) {
 }
 
 Loom_TippingBucket::Loom_TippingBucket(
-    struct TippingBucketData *data, uint32_t debounceMillis, uint8_t pin
+    struct TippingBucketData *data,
+    uint32_t debounceMillis,
+    uint8_t pin,
+    uint32_t detectionMode,
+    uint32_t triggerMode
 ) : Module() {
     this->data = data;
     this->debounceMillis = debounceMillis;
     this->pin = pin;
+    this->detectionMode = detectionMode;
+    this->triggerModeMode = triggerModeMode;
 }
 
 void Loom_TippingBucket::initialize() {
@@ -58,10 +64,10 @@ void Loom_TippingBucket::initialize() {
 
     overflow = false;
 
-    pinMode(pin, INPUT_PULLDOWN);
+    pinMode(pin, pinMode);
 
     /* Detect bucket tip as interrupt */
-    attachInterrupt(pin, tipDetect, CHANGE);
+    attachInterrupt(pin, tipDetect, triggerMode);
 }
 
 /* Get number of circular buffer entries with timestamp in the past hour */

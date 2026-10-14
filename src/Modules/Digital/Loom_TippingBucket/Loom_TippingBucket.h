@@ -25,7 +25,11 @@ class Loom_TippingBucket : public Module{
 
   public:
     Loom_TippingBucket(
-        struct TippingBucketData *data, uint32_t debounceMillis, uint8_t pin
+        struct TippingBucketData *data,
+        uint32_t debounceMillis,
+        uint8_t pin,
+        uint32_t detectionMode = INPUT_PULLDOWN,
+        uint32_t triggerMode = CHANGE
     );
     static void tipHandle(void);
 
@@ -33,6 +37,8 @@ class Loom_TippingBucket : public Module{
     static void tipDetect(void);
     static uint32_t debounceMillis;
     uint8_t pin;
+    uint32_t pinMode;
+    uint32_t triggerMode;
 
     static volatile struct TippingBucketData *data;
 
