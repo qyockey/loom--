@@ -10,7 +10,7 @@
 
 /**
  * Detect and monitor pending interrupts.
- * 
+ *
  * This allows interrupt service routines to be as short as possible, just a
  * single call to `setPending`.  The main loop of the application can then check
  * each interrupt independently with `isPending`, handle it as needed, then
