@@ -2,7 +2,7 @@
 
 #include "Hardware/Loom_RTC/Loom_RTC.h"
 #include "Hardware/Loom_Sleep/Loom_Sleep.h"
-#include "Logger.h"
+#include "Logger/Logger.h"
 #include "Loom_SEN66.h"
 
 #define SEN66_SUCCESS 0

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "Loom_DS3231.h"
-#include "Logger.h"
+#include "Logger/Logger.h"
 
 Loom_DS3231::Loom_DS3231(struct DS3231Data *timestamp) : Module() {
     this->timestamp = timestamp;

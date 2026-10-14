@@ -2,7 +2,7 @@
 #include <cstdint>
 
 #include "Loom_Manager.h"
-#include "Logger.h"
+#include "Logger/Logger.h"
 #include "Hardware/Loom_Interrupt/Loom_Interrupt.h"
 #include "Hardware/Loom_RTC/Loom_RTC.h"
 #include "Hardware/Loom_Sleep/Loom_Sleep.h"

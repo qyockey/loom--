@@ -1,5 +1,5 @@
 #include "Loom_TSL2591.h"
-#include "Logger.h"
+#include "Logger/Logger.h"
 
 Loom_TSL2591::Loom_TSL2591(TSL2591Data *data, uint8_t addr) : Module() {
     this->data = data;
