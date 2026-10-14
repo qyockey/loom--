@@ -235,7 +235,9 @@ void Manager::powerUp(bool waitForSerial) {
     /* Allow time for Serial connection to establish with computer */
     uint64_t serialTimeout = waitForSerial ? 3000 : 0;
     beginSerial(serialTimeout);
-    LOG("Serial monitor reattached");
+    if (Serial) {
+        LOG("Serial monitor reattached");
+    }
 
     /* Power up peripherals */
     LOG("*** Powering Up ***");
