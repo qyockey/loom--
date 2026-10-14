@@ -192,6 +192,9 @@ void Manager::powerDown() {
         modules[i]->powerDown();
     }
 
+    /* Force Serial reconnection when powering up */
+    Serial.end();
+
     /* Since the SD card may have power disconnected, no logging
      * allowed until power is restored.  Device will hang. */
     rails.asleepMode();
