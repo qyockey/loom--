@@ -61,7 +61,7 @@ void Loom_TippingBucket::initialize() {
     pinMode(pin, INPUT_PULLDOWN);
 
     /* Detect bucket tip as interrupt */
-    attachInterrupt(pin, tipDetect, FALLING);
+    attachInterrupt(pin, tipDetect, CHANGE);
 }
 
 /* Get number of circular buffer entries with timestamp in the past hour */
