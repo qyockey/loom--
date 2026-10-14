@@ -58,6 +58,8 @@ void Loom_TippingBucket::initialize() {
 
     overflow = false;
 
+    pinMode(pin, INPUT_PULLDOWN);
+
     /* Detect bucket tip as interrupt */
     attachInterrupt(pin, tipDetect, FALLING);
 }
