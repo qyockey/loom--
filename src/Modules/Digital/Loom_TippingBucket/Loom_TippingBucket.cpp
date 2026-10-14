@@ -54,7 +54,7 @@ Loom_TippingBucket::Loom_TippingBucket(
     this->debounceMillis = debounceMillis;
     this->pin = pin;
     this->detectionMode = detectionMode;
-    this->triggerModeMode = triggerModeMode;
+    this->triggerMode = triggerMode;
 }
 
 void Loom_TippingBucket::initialize() {
@@ -66,7 +66,7 @@ void Loom_TippingBucket::initialize() {
 
     overflow = false;
 
-    pinMode(pin, pinMode);
+    pinMode(pin, detectionMode);
 
     /* Detect bucket tip as interrupt */
     attachInterrupt(pin, tipDetect, triggerMode);
