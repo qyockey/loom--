@@ -211,10 +211,7 @@ void Manager::setAlarm(enum AlarmSource source, uint32_t millis) {
             break;
 
         case ALARM_RTC_EXTERNAL:
-            // TODO Add alarm to DS3231
-            // TimeSpan alarmSpan = millis / 1000;
-            // DateTime alarmTime = rtcExternal.now() + alarmSpan;
-            // rtcExternal.setAlarm(alarmTime);
+            rtcExternal.setAlarmIn(millis / 1000);
             break;
     }
 }

@@ -2,6 +2,13 @@
 
 #include "Loom_DS3231.h"
 #include "Logger/Logger.h"
+#include "Hardware/Loom_Interrupt/Loom_Interrupt.h"
+
+#define PIN_DS3231_ALARM 12
+
+void Loom_DS3231::detectAlarm(void) {
+    Loom_Interrupt::setPending(INTERRUPT_RTC_EXTERNAL);
+}
 
 Loom_DS3231::Loom_DS3231(struct DS3231Data *timestamp) : Module() {
     this->timestamp = timestamp;
@@ -21,6 +28,9 @@ void Loom_DS3231::initialize() {
         LOG("RTC lost power, set the time");
         setCustomTime();
     }
+
+    pinMode(PIN_DS3231_ALARM, INPUT_PULLUP);
+    attachInterrupt(PIN_DS3231_ALARM, detectAlarm, FALLING);
 
     LOG("DS3231 real-time clock initialized successfully!");
     LOGF("UTC time now: %s", rtc.now().text());
@@ -87,6 +97,29 @@ char *Loom_DS3231::getCurrentTimeUtcIsoFormat(void) {
     struct tm timeNowUtc;
     getCurrentTimeUtc(&timeNowUtc);
     return isoFormat(&timeNowUtc);
+}
+
+void Loom_DS3231::setAlarmAtUtc(struct tm *timeAlarm) {
+    rtc.setAlarm(
+        ALM1_MATCH_DATE,
+        timeAlarm->tm_sec,
+        timeAlarm->tm_min,
+        timeAlarm->tm_hour,
+        timeAlarm->tm_mday
+    );
+
+    LOGF("Alarm set for %s", isoFormat(timeAlarm));
+}
+
+void Loom_DS3231::setAlarmIn(uint32_t seconds) {
+    struct tm timeNowUtc;
+    getCurrentTimeUtc(&timeNowUtc);
+
+    time_t timeNowUnix = mktime(&timeNowUtc);
+    time_t timeAlarmUnix = timeNowUnix + (time_t) seconds;
+
+    struct tm *timeAlarmUtc = gmtime(&timeAlarmUnix);
+    setAlarmAtUtc(timeAlarmUtc);
 }
 
 int16_t Loom_DS3231::serialReadInt(const char *prompt, int16_t min, int16_t max) {

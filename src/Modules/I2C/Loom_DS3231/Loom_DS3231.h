@@ -44,6 +44,18 @@ class Loom_DS3231 : public Module {
      */
     char *getCurrentTimeUtcIsoFormat(void);
 
+    /**
+     * Set alarm at given date and time
+     * @param timeAlarm Time at which alarm should fire
+     */
+    void setAlarmAtUtc(struct tm *timeAlarm);
+
+    /**
+     * Set alarm for a given number of seconds in the future
+     * @param seconds Number of seconds until alarm should fire
+     */
+    void setAlarmIn(uint32_t seconds);
+
     bool isInitialized(void) { return initialized; }
 
   private:
@@ -52,7 +64,10 @@ class Loom_DS3231 : public Module {
     RTC_DS3231 rtc;
     bool initialized = false;
 
-    void initializeRtc();
+    /**
+     * Handle RTC alarm trigger by setting pending interrupt flag
+     */
+    static void detectAlarm(void);
 
     /**
      * Get ISO-8601 representation (YYYY-MM-DDTHH:MM:SSZ) of time structure
