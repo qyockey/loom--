@@ -79,10 +79,10 @@ uint32_t Loom_TippingBucket::getHourlyTips() {
 
     uint32_t timeNow = Loom_RTC::getTimestampMillis();
 
-    /* Search from earliest for first tip within one hour */
+    /* Search from earliest through latest for first tip within one hour */
     for (
         uint8_t i = indexEarliest;
-        i != indexLatest;
+        i != (indexLatest + 1) % LOOM_MAX_HOURLY_TIPS;
         i = (i + 1) % LOOM_MAX_HOURLY_TIPS
     ) {
         uint32_t sampleTime = timestamps[i];
@@ -90,7 +90,15 @@ uint32_t Loom_TippingBucket::getHourlyTips() {
         if (timeNow - sampleTime < LOOM_MILLIS_ONE_HOUR && sampleTime != 0) {
             /* Found first tip within one hour */
             indexEarliest = i;
-            return (indexLatest - indexEarliest) % LOOM_MAX_HOURLY_TIPS + 1;
+
+            /* Distance from earliest to latest, inclusive.
+             * Modulus doesn't behave well for negative numbers, so adding
+             * LOOM_MAX_HOURLY_TIPS ensures this behaves when the buffer wraps
+             * around. */
+            return (
+                (indexLatest - indexEarliest + 1 + LOOM_MAX_HOURLY_TIPS)
+                % LOOM_MAX_HOURLY_TIPS
+            );
         }
     }
 
