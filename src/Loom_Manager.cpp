@@ -3,9 +3,9 @@
 
 #include "Loom_Manager.h"
 #include "Logger/Logger.h"
-#include "Hardware/Loom_Interrupt/Loom_Interrupt.h"
-#include "Hardware/Loom_RTC/Loom_RTC.h"
-#include "Hardware/Loom_Sleep/Loom_Sleep.h"
+#include "Control/Loom_Interrupt/Loom_Interrupt.h"
+#include "Control/Loom_RTC/Loom_RTC.h"
+#include "Control/Loom_Sleep/Loom_Sleep.h"
 
 // Constructor
 Manager::Manager(

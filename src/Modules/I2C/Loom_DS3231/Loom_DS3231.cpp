@@ -2,7 +2,7 @@
 
 #include "Loom_DS3231.h"
 #include "Logger/Logger.h"
-#include "Hardware/Loom_Interrupt/Loom_Interrupt.h"
+#include "Control/Loom_Interrupt/Loom_Interrupt.h"
 
 #define PIN_DS3231_ALARM 12
 

@@ -1,7 +1,7 @@
 #include <Arduino.h>
 
 #include "Loom_RTC.h"
-#include "Hardware/Loom_Interrupt/Loom_Interrupt.h"
+#include "Control/Loom_Interrupt/Loom_Interrupt.h"
 
 bool Loom_RTC::initialized = false;
 

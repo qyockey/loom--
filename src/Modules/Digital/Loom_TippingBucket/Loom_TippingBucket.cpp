@@ -1,8 +1,8 @@
 #include <Arduino.h>
 
 #include "Loom_TippingBucket.h"
-#include "Hardware/Loom_Interrupt/Loom_Interrupt.h"
-#include "Hardware/Loom_RTC/Loom_RTC.h"
+#include "Control/Loom_Interrupt/Loom_Interrupt.h"
+#include "Control/Loom_RTC/Loom_RTC.h"
 
 /* Number of milliseconds per hour */
 #define LOOM_MILLIS_ONE_HOUR (60 * 60 * 1000)

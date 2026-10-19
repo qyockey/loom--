@@ -1,7 +1,7 @@
 #include <Wire.h>
 
-#include "Hardware/Loom_RTC/Loom_RTC.h"
-#include "Hardware/Loom_Sleep/Loom_Sleep.h"
+#include "Control/Loom_RTC/Loom_RTC.h"
+#include "Control/Loom_Sleep/Loom_Sleep.h"
 #include "Logger/Logger.h"
 #include "Loom_SEN66.h"
 
