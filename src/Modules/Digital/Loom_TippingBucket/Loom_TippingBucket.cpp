@@ -61,7 +61,6 @@ void Loom_TippingBucket::initialize() {
     }
     indexLatest = 0;
     indexEarliest = 0;
-
     overflow = false;
 
     pinMode(pin, detectionMode);

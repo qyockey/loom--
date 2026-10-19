@@ -127,7 +127,7 @@ int16_t Loom_DS3231::serialReadInt(const char *prompt, int16_t min, int16_t max)
         Serial.printf("%s (%d-%d)\n", prompt, min, max);
 
         /* Block until at least one byte arrives in the Serial buffer */
-        while (Serial.available() == 0) {
+        while (Serial.available() == false) {
             delay(10);
         }
 
