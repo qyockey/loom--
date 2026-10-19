@@ -51,6 +51,7 @@ class Loom_SEN66 : public Module {
     Loom_SEN66(SEN66Data *data);
 
   private:
+    void startFan();
     bool measureSingle();
     void accumulateReading();
     void getAverageReading();
