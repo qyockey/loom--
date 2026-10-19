@@ -37,7 +37,7 @@ class Loom_TippingBucket : public Module{
         uint32_t debounceMillis,
         uint8_t pin,
         uint32_t detectionMode = INPUT_PULLUP,
-        uint32_t triggerMode = CHANGE
+        uint32_t triggerMode = FALLING
     );
     static void tipHandle(void);
 
