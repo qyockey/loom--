@@ -1,5 +1,6 @@
 #include <Wire.h>
 
+#include "Control/Loom_Interrupt/Loom_Interrupt.h"
 #include "Control/Loom_RTC/Loom_RTC.h"
 #include "Control/Loom_Sleep/Loom_Sleep.h"
 #include "Logger/Logger.h"
@@ -26,6 +27,22 @@ Loom_SEN66::Loom_SEN66(struct SEN66Data *data) : Module() {
     fields[CO2].measured.u       = &data->co2;
 }
 
+void waitForFanSpinUp() {
+    LOG("SEN66: Spinning up fan for 30 seconds");
+    /* Prevent RTC from setting pending wakeup */
+    bool builtinRtcEnabled = Loom_Interrupt::isEnabled(INTERRUPT_RTC_INTERNAL);
+    Loom_Interrupt::disable(INTERRUPT_RTC_INTERNAL);
+
+    Loom_RTC::setAlarm(30 * 1000);
+    Loom_Sleep::sleep();
+
+    /* Restore previous builtin RTC enable state */
+    if (builtinRtcEnabled) {
+        Loom_Interrupt::enable(INTERRUPT_RTC_INTERNAL);
+    }
+    LOG("SEN66: Fan spin up complete");
+}
+
 void Loom_SEN66::initialize() {
     Wire.begin();
     sen66.begin(Wire, SEN66_I2C_ADDR_6B);
@@ -48,16 +65,12 @@ void Loom_SEN66::initialize() {
         return;
     }
 
+    waitForFanSpinUp();
     status = sen66.startContinuousMeasurement();
     if (status != SEN66_SUCCESS) {
         ERRORF("Continuous measurement failed with error code %u", status);
         return;
     }
-
-    LOG("SEN66: Spinning up fan for 30 seconds");
-    Loom_RTC::setAlarm(30 * 1000);
-    Loom_Sleep::sleep();
-    LOG("SEN66: Fan spin up complete");
 
     initialized = true;
 }
@@ -242,10 +255,7 @@ void Loom_SEN66::powerUp() {
         return;
     }
 
-    LOG("SEN66: Spinning up fan for 30 seconds");
-    Loom_RTC::setAlarm(30 * 1000);
-    Loom_Sleep::sleep();
-    LOG("SEN66: Fan spin up complete");
+    waitForFanSpinUp();
 }
 
 void Loom_SEN66::writeCsvHeader1(File *csv) {
