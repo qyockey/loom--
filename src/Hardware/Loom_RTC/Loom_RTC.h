@@ -23,11 +23,6 @@ class Loom_RTC {
     /* Disable any pending alarm */
     static void unsetAlarm(void);
 
-    /* Register a callback function to call once alarm triggers */
-    static void registerAlarmCallback(void (*callback)(void));
-
-    static void (*callback)(void);
-
   private:
     static void configureRtcClockSource(void);
     static uint32_t tick2ms(uint32_t tick);

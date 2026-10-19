@@ -4,7 +4,6 @@
 #include "Hardware/Loom_Interrupt/Loom_Interrupt.h"
 
 bool Loom_RTC::initialized = false;
-void (*Loom_RTC::callback)(void) = nullptr;
 
 void Loom_RTC::initialize(void) {
     /* Set OSCULP32K ultra low power 32.768 kHz oscillator to clock the RTC.
@@ -83,18 +82,10 @@ void Loom_RTC::unsetAlarm(void) {
     RTC->MODE0.INTENCLR.bit.CMP0 = 1;
 }
 
-void Loom_RTC::registerAlarmCallback(void (*callback)(void)) {
-    Loom_RTC::callback = callback;
-}
-
 void RTC_Handler(void) {
-    if (Loom_RTC::callback != nullptr) {
-        Loom_RTC::callback();
-    }
+    /* Set interrupt cause */
+    Loom_Interrupt::setPending(INTERRUPT_RTC_INTERNAL);
 
     /* Clear interrupt pending flag */
     RTC->MODE0.INTFLAG.bit.CMP0 = 1;
-
-    /* Set interrupt cause */
-    Loom_Interrupt::setPending(INTERRUPT_RTC_INTERNAL);
 }
