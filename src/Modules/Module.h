@@ -23,13 +23,15 @@ class Module {
     virtual void writeCsvHeader2(File *csv) = 0;
     virtual void writeCsvBody(File *csv) = 0;
 
-    void activateCommunication(void) {
-        if (muxPort != -1) {
-            Loom_Multiplexer::selectPort(muxPort);
-        }
+    bool usingMux(void) {
+        return (muxPort > 0);
     }
 
-  private:
+    uint8_t getMuxPort(void) {
+        return (uint8_t) muxPort;
+    }
+
+  protected:
     // For modules connected via TCA9548A I²C multiplexer
     int8_t muxPort = -1;
 };

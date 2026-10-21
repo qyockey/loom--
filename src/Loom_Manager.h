@@ -3,6 +3,7 @@
 #include <cstdint>
 
 #include "Modules/I2C/Loom_DS3231/Loom_DS3231.h"
+#include "Hardware/Loom_Multiplexer/Loom_Multiplexer.h"
 #include "Hardware/Loom_PowerRail/Loom_PowerRail.h"
 #include "Hardware/Loom_SdManager/SdManager.h"
 #include "Modules/Module.h"
@@ -47,12 +48,14 @@ class Manager {
      * @param devName Device name to provided for logging purposes
      * @param instanceNum Instance number for logging purposes
      * @param hypnosVersion Hypnos board version
+     * @param muxAddr I²C address of TCA9548A I²C multiplexer
      */
     Manager(
         struct PacketMetadata *metadata,
         const char *devName,
         uint32_t instanceNum,
-        HypnosVersion hypnosVersion = HypnosVersion::V3_3
+        HypnosVersion hypnosVersion = HypnosVersion::V3_3,
+        uint8_t muxAddr = LOOM_MUX_ADDR_DEFAULT
     );
 
     /**
@@ -186,6 +189,8 @@ class Manager {
 
     Loom_PowerRail rails;
     SdManager sd;
+    Loom_Multiplexer mux;
+
     void writeCsvHeader();
 
     // Serial number unique to device

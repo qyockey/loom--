@@ -12,13 +12,16 @@ Manager::Manager(
     struct PacketMetadata *metadata,
     const char *devName,
     uint32_t instanceNum,
-    HypnosVersion hypnosVersion
+    HypnosVersion hypnosVersion,
+    uint8_t muxAddr
 ) :
     deviceName(devName),
     instanceNumber(instanceNum),
     packetNumber(&metadata->packetNumber),
     rtcExternal(&metadata->timestamp),
-    sd(hypnosVersion, deviceName) {
+    sd(hypnosVersion, deviceName),
+    mux(muxAddr)
+{
 
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
@@ -124,6 +127,7 @@ void Manager::initialize() {
     rails.initialize();
     sd.initialize();
     Logger::initialize(&sd, &rtcExternal);
+
     logResetCause();
     writeCsvHeader();
 
@@ -132,9 +136,12 @@ void Manager::initialize() {
 
     for (size_t i = 0; i < numRegisteredModules; i++) {
         Module *activeModule = modules[i];
-        activeModule->activateCommunication();
+        if (activeModule->usingMux()) {
+            mux.enablePort(activeModule->getMuxPort());
+        }
         activeModule->initialize();
     }
+    mux.disable();
 }
 
 // Measure data from all modules
@@ -142,9 +149,12 @@ void Manager::measure() {
     LOG("*** Measuring ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         Module *activeModule = modules[i];
-        activeModule->activateCommunication();
+        if (activeModule->usingMux()) {
+            mux.enablePort(activeModule->getMuxPort());
+        }
         activeModule->measure();
     }
+    mux.disable();
 }
 
 // Display data from all modules
@@ -194,9 +204,12 @@ void Manager::powerDown() {
     LOG("*** Powering Down ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         Module *activeModule = modules[i];
-        activeModule->activateCommunication();
+        if (activeModule->usingMux()) {
+            mux.enablePort(activeModule->getMuxPort());
+        }
         activeModule->powerDown();
     }
+    mux.disable();
 
     /* Force Serial reconnection when powering up */
     Serial.end();
@@ -246,9 +259,12 @@ void Manager::powerUp(bool waitForSerial) {
     LOG("*** Powering Up ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         Module *activeModule = modules[i];
-        activeModule->activateCommunication();
+        if (activeModule->usingMux()) {
+            mux.enablePort(activeModule->getMuxPort());
+        }
         activeModule->powerUp();
     }
+    mux.disable();
 }
 
 void Manager::readSerialNum() {
