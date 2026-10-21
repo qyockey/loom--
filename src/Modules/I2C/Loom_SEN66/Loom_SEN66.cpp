@@ -1,4 +1,5 @@
 #include <Wire.h>
+#include <SensirionErrors.h>
 
 #include "Control/Loom_Interrupt/Loom_Interrupt.h"
 #include "Control/Loom_RTC/Loom_RTC.h"
@@ -7,6 +8,7 @@
 #include "Loom_SEN66.h"
 
 #define SEN66_SUCCESS 0
+#define SEN66_ERROR_BUF 64
 
 Loom_SEN66::Loom_SEN66(struct SEN66Data *data, int8_t muxPort) : Module() {
     this->measured = data;
@@ -26,6 +28,16 @@ Loom_SEN66::Loom_SEN66(struct SEN66Data *data, int8_t muxPort) : Module() {
     fields[VOC      ].measured.s = &data->voc;
     fields[NOX      ].measured.s = &data->nox;
     fields[CO2      ].measured.u = &data->co2;
+}
+
+void Loom_SEN66::logError(uint16_t error) {
+    if (error == SEN66_SUCCESS) {
+        return;
+    }
+
+    char errorMessage[SEN66_ERROR_BUF];
+    errorToString(error, errorMessage, SEN66_ERROR_BUF);
+    ERRORF("SEN66: %s", errorMessage);
 }
 
 void waitForFanSpinUp() {
@@ -52,24 +64,27 @@ void Loom_SEN66::initialize() {
     uint16_t status = sen66.deviceReset();
 
     if (status != SEN66_SUCCESS) {
-        ERRORF("Reset failed with error code %u", status);
+        ERROR("SEN66: Reset failed");
+        logError(status);
         return;
     }
-    LOG("Sensor successfully reset!");
+    LOG("SEN66 successfully reset!");
 
     LOG("Resetting SEN66, waiting 1.2s...");
     delay(1200);
 
     status = sen66.stopMeasurement();
     if (status != SEN66_SUCCESS) {
-        ERRORF("Stop measurement failed with error code %u", status);
+        ERROR("SEN66: Stop measurement failed");
+        logError(status);
         return;
     }
 
     waitForFanSpinUp();
     status = sen66.startContinuousMeasurement();
     if (status != SEN66_SUCCESS) {
-        ERRORF("Continuous measurement failed with error code %u", status);
+        ERROR("SEN66: Continuous measurement failed");
+        logError(status);
         return;
     }
 
@@ -84,7 +99,8 @@ bool Loom_SEN66::measureSingle() {
     bool dataReady = false;
     status = sen66.getDataReady(_padding, dataReady);
     if (status != SEN66_SUCCESS) {
-        ERRORF("Read error: %u", status);
+        ERROR("SEN66: Read error");
+        logError(status);
         return false;
     }
     if (!dataReady) {
@@ -105,7 +121,8 @@ bool Loom_SEN66::measureSingle() {
     );
 
     if (status != SEN66_SUCCESS) {
-        ERRORF("Read error: %u", status);
+        ERROR("SEN66: Read error");
+        logError(status);
         return false;
     }
 
@@ -118,7 +135,8 @@ bool Loom_SEN66::measureSingle() {
     );
 
     if (status != SEN66_SUCCESS) {
-        ERRORF("Read error: %u", status);
+        ERROR("SEN66: Read error");
+        logError(status);
         return false;
     }
 
@@ -241,6 +259,7 @@ void Loom_SEN66::powerDown() {
     int16_t status = sen66.stopMeasurement();
     if (status != SEN66_SUCCESS) {
         ERROR("SEN66: Error stopping continuous measurement");
+        logError(status);
         return;
     }
 }
@@ -253,6 +272,7 @@ void Loom_SEN66::powerUp() {
     int16_t status = sen66.startContinuousMeasurement();
     if (status != SEN66_SUCCESS) {
         ERROR("SEN66: Error starting continuous measurement");
+        logError(status);
         return;
     }
 
@@ -301,10 +321,11 @@ void Loom_SEN66::checkDeviceStatus() {
     }
 
     SEN66DeviceStatus deviceStatus;
-    uint16_t status = sen66.readDeviceStatus(deviceStatus);
+    uint16_t requestStatus = sen66.readDeviceStatus(deviceStatus);
 
-    if (status != SEN66_SUCCESS) {
-        ERRORF("Error reading device status: %u", status);
+    if (requestStatus != SEN66_SUCCESS) {
+        ERROR("SEN66: Error reading device status");
+        logError(requestStatus);
         return;
     }
 

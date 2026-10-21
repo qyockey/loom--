@@ -56,6 +56,7 @@ class Loom_SEN66 : public Module {
 
   private:
     void startFan();
+    void logError(uint16_t error);
     bool measureSingle();
     void accumulateReading();
     void getAverageReading();
