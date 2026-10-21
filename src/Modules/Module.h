@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SdFat.h>
+#include "Hardware/Loom_Multiplexer/Loom_Multiplexer.h"
 
 /**
  *  General overarching interface to provide basic unified functionality
@@ -21,4 +22,14 @@ class Module {
     virtual void writeCsvHeader1(File *csv) = 0;
     virtual void writeCsvHeader2(File *csv) = 0;
     virtual void writeCsvBody(File *csv) = 0;
+
+    void activateCommunication(void) {
+        if (muxPort != -1) {
+            Loom_Multiplexer::selectPort(muxPort);
+        }
+    }
+
+  private:
+    // For modules connected via TCA9548A I²C multiplexer
+    int8_t muxPort = -1;
 };

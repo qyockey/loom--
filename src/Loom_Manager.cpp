@@ -129,7 +129,9 @@ void Manager::initialize() {
     Loom_RTC::initialize();
 
     for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->initialize();
+        Module *activeModule = modules[i];
+        activeModule->activateCommunication();
+        activeModule->initialize();
     }
 }
 
@@ -137,7 +139,9 @@ void Manager::initialize() {
 void Manager::measure() {
     LOG("*** Measuring ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->measure();
+        Module *activeModule = modules[i];
+        activeModule->activateCommunication();
+        activeModule->measure();
     }
 }
 
@@ -186,14 +190,18 @@ void Manager::logToSd() {
 void Manager::powerDown() {
     LOG("*** Powering Down ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->powerDown();
+        Module *activeModule = modules[i];
+        activeModule->activateCommunication();
+        activeModule->powerDown();
     }
 }
 
 void Manager::powerUp() {
     LOG("*** Powering Up ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
-        modules[i]->powerUp();
+        Module *activeModule = modules[i];
+        activeModule->activateCommunication();
+        activeModule->powerUp();
     }
 }
 
