@@ -1,9 +1,9 @@
 #include <Arduino.h>
 
 #include "Loom_RTC.h"
+#include "Control/Loom_Interrupt/Loom_Interrupt.h"
 
 bool Loom_RTC::initialized = false;
-void (*Loom_RTC::callback)(void) = nullptr;
 
 void Loom_RTC::initialize(void) {
     /* Set OSCULP32K ultra low power 32.768 kHz oscillator to clock the RTC.
@@ -11,17 +11,17 @@ void Loom_RTC::initialize(void) {
      * 30.52 μs.
      * Enable the RTC to generate interrupts. */
 
-    /* Configure OSCULP32K to control GCLK6 */
+    /* Configure OSCULP32K to control GCLK5 */
     GCLK->GENCTRL.reg = (
-          GCLK_GENCTRL_ID(6)
+          GCLK_GENCTRL_ID(5)
         | GCLK_GENCTRL_GENEN
         | GCLK_GENCTRL_SRC_OSCULP32K
     );
     while (GCLK->STATUS.bit.SYNCBUSY == 1);
 
-    /* Configure GCLK6 to control GCLK_RTC */
+    /* Configure GCLK5 to control GCLK_RTC */
     GCLK->CLKCTRL.reg = (
-          GCLK_CLKCTRL_GEN_GCLK6
+          GCLK_CLKCTRL_GEN_GCLK5
         | GCLK_CLKCTRL_ID_RTC
         | GCLK_CLKCTRL_CLKEN
     );
@@ -82,14 +82,9 @@ void Loom_RTC::unsetAlarm(void) {
     RTC->MODE0.INTENCLR.bit.CMP0 = 1;
 }
 
-void Loom_RTC::registerAlarmCallback(void (*callback)(void)) {
-    Loom_RTC::callback = callback;
-}
-
 void RTC_Handler(void) {
-    if (Loom_RTC::callback != nullptr) {
-        Loom_RTC::callback();
-    }
+    /* Set interrupt cause */
+    Loom_Interrupt::setPending(INTERRUPT_RTC_INTERNAL);
 
     /* Clear interrupt pending flag */
     RTC->MODE0.INTFLAG.bit.CMP0 = 1;

@@ -10,7 +10,7 @@ void Loom_Sleep::sleep(void) {
     USBDevice.detach();
 
     /* Disable SYSTICK interrupt to prevent 1024 Hz wakeups during sleep */
-	SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;	
+	SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;
 
     /* Enter deep sleep mode */
 	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
@@ -20,7 +20,7 @@ void Loom_Sleep::sleep(void) {
     __WFI();
 
     /* Re-enable SYSTICK interrupt to restore delay() functionality */
-	SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;	
+	SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;
 
     /* Reattach USB to enable Serial interface */
     USBDevice.attach();

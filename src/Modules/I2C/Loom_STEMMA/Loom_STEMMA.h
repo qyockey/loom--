@@ -16,8 +16,8 @@ struct StemmaData {
  */
 class Loom_STEMMA : public Module {
   protected:
-    void measure() override;
     void initialize() override;
+    void measure() override;
     void displayData() override;
     void powerDown() override {};
     void powerUp() override {};

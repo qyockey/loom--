@@ -1,5 +1,5 @@
 #include "SdManager.h"
-#include "Logger.h"
+#include "Logger/Logger.h"
 
 SdManager::SdManager(HypnosVersion hypnosVersion, const char *deviceName) {
     pinChipSelect = (uint8_t) hypnosVersion;

@@ -1,5 +1,5 @@
 #include "Loom_AS7265X.h"
-#include "Logger.h"
+#include "Logger/Logger.h"
 
 Loom_AS7265X::Loom_AS7265X(struct AS7265XData *data, uint8_t addr)
     : Module() {

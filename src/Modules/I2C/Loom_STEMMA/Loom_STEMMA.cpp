@@ -1,5 +1,5 @@
 #include "Loom_STEMMA.h"
-#include "Logger.h"
+#include "Logger/Logger.h"
 
 Loom_STEMMA::Loom_STEMMA(struct StemmaData *data, uint8_t addr) : Module() {
     this->data = data;

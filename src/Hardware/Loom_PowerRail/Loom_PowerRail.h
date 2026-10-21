@@ -53,7 +53,7 @@ namespace RailState {
 class Loom_PowerRail {
   public:
 
-    /* 
+    /*
      * Initialize power rail control pins and set rails to awake configuration
      */
     void initialize(void);

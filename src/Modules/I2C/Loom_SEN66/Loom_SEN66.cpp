@@ -1,8 +1,9 @@
 #include <Wire.h>
 
-#include "Hardware/Loom_RTC/Loom_RTC.h"
-#include "Hardware/Loom_Sleep/Loom_Sleep.h"
-#include "Logger.h"
+#include "Control/Loom_Interrupt/Loom_Interrupt.h"
+#include "Control/Loom_RTC/Loom_RTC.h"
+#include "Control/Loom_Sleep/Loom_Sleep.h"
+#include "Logger/Logger.h"
 #include "Loom_SEN66.h"
 
 #define SEN66_SUCCESS 0
@@ -11,20 +12,36 @@ Loom_SEN66::Loom_SEN66(struct SEN66Data *data, int8_t muxPort) : Module() {
     this->measured = data;
     this->muxPort = muxPort;
 
-    fields[PM1].measured.u       = &data->pm1;
-    fields[PM2p5].measured.u     = &data->pm2p5;
-    fields[PM4].measured.u       = &data->pm4;
-    fields[PM10].measured.u      = &data->pm10;
+    fields[PM1      ].measured.u = &data->pm1;
+    fields[PM2p5    ].measured.u = &data->pm2p5;
+    fields[PM4      ].measured.u = &data->pm4;
+    fields[PM10     ].measured.u = &data->pm10;
     fields[NUM_PM0p5].measured.u = &data->numPm0p5;
-    fields[NUM_PM1].measured.u   = &data->numPm1;
+    fields[NUM_PM1  ].measured.u = &data->numPm1;
     fields[NUM_PM2p5].measured.u = &data->numPm2p5;
-    fields[NUM_PM4].measured.u   = &data->numPm4;
-    fields[NUM_PM10].measured.u  = &data->numPm10;
-    fields[HUMIDITY].measured.s  = &data->humidity;
-    fields[TEMP_C].measured.s    = &data->temp_c;
-    fields[VOC].measured.s       = &data->voc;
-    fields[NOX].measured.s       = &data->nox;
-    fields[CO2].measured.u       = &data->co2;
+    fields[NUM_PM4  ].measured.u = &data->numPm4;
+    fields[NUM_PM10 ].measured.u = &data->numPm10;
+    fields[HUMIDITY ].measured.s = &data->humidity;
+    fields[TEMP_C   ].measured.s = &data->temp_c;
+    fields[VOC      ].measured.s = &data->voc;
+    fields[NOX      ].measured.s = &data->nox;
+    fields[CO2      ].measured.u = &data->co2;
+}
+
+void waitForFanSpinUp() {
+    LOG("SEN66: Spinning up fan for 30 seconds");
+    /* Prevent RTC from setting pending wakeup */
+    bool builtinRtcEnabled = Loom_Interrupt::isEnabled(INTERRUPT_RTC_INTERNAL);
+    Loom_Interrupt::disable(INTERRUPT_RTC_INTERNAL);
+
+    Loom_RTC::setAlarm(30 * 1000);
+    Loom_Sleep::sleep();
+
+    /* Restore previous builtin RTC enable state */
+    if (builtinRtcEnabled) {
+        Loom_Interrupt::enable(INTERRUPT_RTC_INTERNAL);
+    }
+    LOG("SEN66: Fan spin up complete");
 }
 
 void Loom_SEN66::initialize() {
@@ -49,16 +66,12 @@ void Loom_SEN66::initialize() {
         return;
     }
 
+    waitForFanSpinUp();
     status = sen66.startContinuousMeasurement();
     if (status != SEN66_SUCCESS) {
         ERRORF("Continuous measurement failed with error code %u", status);
         return;
     }
-
-    LOG("SEN66: Spinning up fan for 30 seconds");
-    Loom_RTC::setAlarm(30 * 1000);
-    Loom_Sleep::sleep();
-    LOG("SEN66: Fan spin up complete");
 
     initialized = true;
 }
@@ -80,15 +93,15 @@ bool Loom_SEN66::measureSingle() {
     }
 
     status = sen66.readMeasuredValuesAsIntegers(
-        fields[PM1].value.u,
-        fields[PM2p5].value.u,
-        fields[PM4].value.u,
-        fields[PM10].value.u,
+        fields[PM1     ].value.u,
+        fields[PM2p5   ].value.u,
+        fields[PM4     ].value.u,
+        fields[PM10    ].value.u,
         fields[HUMIDITY].value.s,
-        fields[TEMP_C].value.s,
-        fields[VOC].value.s,
-        fields[NOX].value.s,
-        fields[CO2].value.u
+        fields[TEMP_C  ].value.s,
+        fields[VOC     ].value.s,
+        fields[NOX     ].value.s,
+        fields[CO2     ].value.u
     );
 
     if (status != SEN66_SUCCESS) {
@@ -98,10 +111,10 @@ bool Loom_SEN66::measureSingle() {
 
     status = sen66.readNumberConcentrationValuesAsIntegers(
         fields[NUM_PM0p5].value.u,
-        fields[NUM_PM1].value.u,
+        fields[NUM_PM1  ].value.u,
         fields[NUM_PM2p5].value.u,
-        fields[NUM_PM4].value.u,
-        fields[NUM_PM10].value.u
+        fields[NUM_PM4  ].value.u,
+        fields[NUM_PM10 ].value.u
     );
 
     if (status != SEN66_SUCCESS) {
@@ -243,10 +256,7 @@ void Loom_SEN66::powerUp() {
         return;
     }
 
-    LOG("SEN66: Spinning up fan for 30 seconds");
-    Loom_RTC::setAlarm(30 * 1000);
-    Loom_Sleep::sleep();
-    LOG("SEN66: Fan spin up complete");
+    waitForFanSpinUp();
 }
 
 void Loom_SEN66::writeCsvHeader1(File *csv) {

@@ -13,11 +13,11 @@ struct SEN66Data {
     uint16_t pm2p5;    // 0.1 μg/m³
     uint16_t pm4;      // 0.1 μg/m³
     uint16_t pm10;     // 0.1 μg/m³
-    uint16_t numPm0p5; // 0.1 particles/cm³ 
-    uint16_t numPm1;   // 0.1 particles/cm³ 
-    uint16_t numPm2p5; // 0.1 particles/cm³ 
-    uint16_t numPm4;   // 0.1 particles/cm³ 
-    uint16_t numPm10;  // 0.1 particles/cm³ 
+    uint16_t numPm0p5; // 0.1 particles/cm³
+    uint16_t numPm1;   // 0.1 particles/cm³
+    uint16_t numPm2p5; // 0.1 particles/cm³
+    uint16_t numPm4;   // 0.1 particles/cm³
+    uint16_t numPm10;  // 0.1 particles/cm³
     int16_t humidity;  // 0.01 %RH
     int16_t temp_c;    // 0.005 °C
     int16_t voc;       // 0.1 index
@@ -55,6 +55,7 @@ class Loom_SEN66 : public Module {
     Loom_SEN66(SEN66Data *data, int8_t muxPort = -1);
 
   private:
+    void startFan();
     bool measureSingle();
     void accumulateReading();
     void getAverageReading();
