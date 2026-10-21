@@ -80,13 +80,13 @@ void Loom_SEN66::initialize() {
         return;
     }
 
-    waitForFanSpinUp();
     status = sen66.startContinuousMeasurement();
     if (status != SEN66_SUCCESS) {
         ERROR("SEN66: Continuous measurement failed");
         logError(status);
         return;
     }
+    waitForFanSpinUp();
 
     initialized = true;
 }
