@@ -11,20 +11,20 @@
 Loom_SEN66::Loom_SEN66(struct SEN66Data *data) : Module() {
     this->measured = data;
 
-    fields[PM1].measured.u       = &data->pm1;
-    fields[PM2p5].measured.u     = &data->pm2p5;
-    fields[PM4].measured.u       = &data->pm4;
-    fields[PM10].measured.u      = &data->pm10;
+    fields[PM1      ].measured.u = &data->pm1;
+    fields[PM2p5    ].measured.u = &data->pm2p5;
+    fields[PM4      ].measured.u = &data->pm4;
+    fields[PM10     ].measured.u = &data->pm10;
     fields[NUM_PM0p5].measured.u = &data->numPm0p5;
-    fields[NUM_PM1].measured.u   = &data->numPm1;
+    fields[NUM_PM1  ].measured.u = &data->numPm1;
     fields[NUM_PM2p5].measured.u = &data->numPm2p5;
-    fields[NUM_PM4].measured.u   = &data->numPm4;
-    fields[NUM_PM10].measured.u  = &data->numPm10;
-    fields[HUMIDITY].measured.s  = &data->humidity;
-    fields[TEMP_C].measured.s    = &data->temp_c;
-    fields[VOC].measured.s       = &data->voc;
-    fields[NOX].measured.s       = &data->nox;
-    fields[CO2].measured.u       = &data->co2;
+    fields[NUM_PM4  ].measured.u = &data->numPm4;
+    fields[NUM_PM10 ].measured.u = &data->numPm10;
+    fields[HUMIDITY ].measured.s = &data->humidity;
+    fields[TEMP_C   ].measured.s = &data->temp_c;
+    fields[VOC      ].measured.s = &data->voc;
+    fields[NOX      ].measured.s = &data->nox;
+    fields[CO2      ].measured.u = &data->co2;
 }
 
 void waitForFanSpinUp() {
@@ -92,15 +92,15 @@ bool Loom_SEN66::measureSingle() {
     }
 
     status = sen66.readMeasuredValuesAsIntegers(
-        fields[PM1].value.u,
-        fields[PM2p5].value.u,
-        fields[PM4].value.u,
-        fields[PM10].value.u,
+        fields[PM1     ].value.u,
+        fields[PM2p5   ].value.u,
+        fields[PM4     ].value.u,
+        fields[PM10    ].value.u,
         fields[HUMIDITY].value.s,
-        fields[TEMP_C].value.s,
-        fields[VOC].value.s,
-        fields[NOX].value.s,
-        fields[CO2].value.u
+        fields[TEMP_C  ].value.s,
+        fields[VOC     ].value.s,
+        fields[NOX     ].value.s,
+        fields[CO2     ].value.u
     );
 
     if (status != SEN66_SUCCESS) {
@@ -110,10 +110,10 @@ bool Loom_SEN66::measureSingle() {
 
     status = sen66.readNumberConcentrationValuesAsIntegers(
         fields[NUM_PM0p5].value.u,
-        fields[NUM_PM1].value.u,
+        fields[NUM_PM1  ].value.u,
         fields[NUM_PM2p5].value.u,
-        fields[NUM_PM4].value.u,
-        fields[NUM_PM10].value.u
+        fields[NUM_PM4  ].value.u,
+        fields[NUM_PM10 ].value.u
     );
 
     if (status != SEN66_SUCCESS) {
