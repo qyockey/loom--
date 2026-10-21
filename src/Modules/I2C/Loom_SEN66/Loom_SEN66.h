@@ -55,8 +55,8 @@ class Loom_SEN66 : public Module {
     Loom_SEN66(SEN66Data *data, int8_t muxPort = -1);
 
   private:
-    void startFan();
     void logError(uint16_t error);
+    void waitForFanSpinUp();
     bool measureSingle();
     void accumulateReading();
     void getAverageReading();

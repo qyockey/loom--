@@ -40,7 +40,7 @@ void Loom_SEN66::logError(uint16_t error) {
     ERRORF("SEN66: %s", errorMessage);
 }
 
-void waitForFanSpinUp() {
+void Loom_SEN66::waitForFanSpinUp() {
     LOG("SEN66: Spinning up fan for 30 seconds");
     /* Prevent RTC from setting pending wakeup */
     bool builtinRtcEnabled = Loom_Interrupt::isEnabled(INTERRUPT_RTC_INTERNAL);
