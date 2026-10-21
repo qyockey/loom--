@@ -7,8 +7,9 @@
 
 #define SEN66_SUCCESS 0
 
-Loom_SEN66::Loom_SEN66(struct SEN66Data *data) : Module() {
+Loom_SEN66::Loom_SEN66(struct SEN66Data *data, int8_t muxPort) : Module() {
     this->measured = data;
+    this->muxPort = muxPort;
 
     fields[PM1].measured.u       = &data->pm1;
     fields[PM2p5].measured.u     = &data->pm2p5;

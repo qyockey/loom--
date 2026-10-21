@@ -47,8 +47,12 @@ class Loom_SEN66 : public Module {
 
   public:
     /**
+     * Constructs a new SEN66 sensor
+     * @param data Pointer to SEN66 measured data structure
+     * @param muxPort I²C port number if connected via TCA9548A multiplexer,
+     *        -1 if not connected via multiplexer
      */
-    Loom_SEN66(SEN66Data *data);
+    Loom_SEN66(SEN66Data *data, int8_t muxPort = -1);
 
   private:
     bool measureSingle();
