@@ -1,9 +1,11 @@
 #include "Loom_SHT31.h"
 #include "Logger/Logger.h"
 
-Loom_SHT31::Loom_SHT31(struct SHT31Data *data, uint8_t addr) : Module() {
+Loom_SHT31::Loom_SHT31(struct SHT31Data *data, uint8_t addr, int8_t muxPort)
+    : Module() {
     this->data = data;
     this->addr = addr;
+    this->muxPort = muxPort;
 }
 
 void Loom_SHT31::initialize() {

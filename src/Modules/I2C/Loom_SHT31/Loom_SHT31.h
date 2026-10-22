@@ -30,8 +30,14 @@ class Loom_SHT31 : public Module {
      * Constructs a new SHT31 sensor
      * @param data Pointer to SHT31 measured data structure
      * @param addr I2C address that is assigned to the sensor
+     * @param muxPort I²C port number if connected via TCA9548A multiplexer,
+     *        -1 if not connected via multiplexer
      */ 
-    Loom_SHT31(struct SHT31Data *data, uint8_t address = 0x44);
+    Loom_SHT31(
+        struct SHT31Data *data,
+        uint8_t address = 0x44,
+        int8_t muxPort = -1
+    );
 
   private:
     struct SHT31Data *data;
