@@ -55,7 +55,7 @@ class Manager {
         const char *devName,
         uint32_t instanceNum,
         HypnosVersion hypnosVersion = HypnosVersion::V3_3,
-        uint8_t muxAddr = LOOM_MUX_ADDR_DEFAULT
+        int8_t muxAddr = -1
     );
 
     /**
@@ -188,10 +188,14 @@ class Manager {
     uint8_t numRegisteredModules;
 
     Loom_PowerRail rails;
-    SdManager sd;
-    Loom_Multiplexer mux;
 
+    SdManager sd;
     void writeCsvHeader();
+
+    bool usingMux;
+    Loom_Multiplexer mux;
+    void activateMuxCommunication(Module *moduleInst);
+    void deactivateMux(void);
 
     // Serial number unique to device
     void readSerialNum();

@@ -23,7 +23,7 @@ class Module {
     virtual void writeCsvHeader2(File *csv) = 0;
     virtual void writeCsvBody(File *csv) = 0;
 
-    bool usingMux(void) {
+    bool onMux(void) {
         return (muxPort > 0);
     }
 

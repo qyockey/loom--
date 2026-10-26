@@ -13,7 +13,7 @@ Manager::Manager(
     const char *devName,
     uint32_t instanceNum,
     HypnosVersion hypnosVersion,
-    uint8_t muxAddr
+    int8_t muxAddr
 ) :
     deviceName(devName),
     instanceNumber(instanceNum),
@@ -22,12 +22,13 @@ Manager::Manager(
     sd(hypnosVersion, deviceName),
     mux(muxAddr)
 {
-
     pinMode(LED_BUILTIN, OUTPUT);
     digitalWrite(LED_BUILTIN, HIGH);
 
     numRegisteredModules = 0;
     this->packetNumber = packetNumber;
+
+    this->usingMux = (muxAddr != -1);
 
     registerModule(&packetNumber);
     registerModule(&rtcExternal);
@@ -121,6 +122,18 @@ void Manager::logResetCause() {
     }
 }
 
+void Manager::activateMuxCommunication(Module *moduleInst) {
+    if (usingMux && moduleInst->onMux()) {
+        mux.enablePort(moduleInst->getMuxPort());
+    }
+}
+
+void Manager::deactivateMux(void) {
+    if (usingMux) {
+        mux.disable();
+    }
+}
+
 // Initialize all modules
 void Manager::initialize() {
     Loom_Interrupt::initialize();
@@ -136,12 +149,10 @@ void Manager::initialize() {
 
     for (size_t i = 0; i < numRegisteredModules; i++) {
         Module *activeModule = modules[i];
-        if (activeModule->usingMux()) {
-            mux.enablePort(activeModule->getMuxPort());
-        }
+        activateMuxCommunication(activeModule);
         activeModule->initialize();
     }
-    mux.disable();
+    deactivateMux();
 }
 
 // Measure data from all modules
@@ -149,12 +160,10 @@ void Manager::measure() {
     LOG("*** Measuring ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         Module *activeModule = modules[i];
-        if (activeModule->usingMux()) {
-            mux.enablePort(activeModule->getMuxPort());
-        }
+        activateMuxCommunication(activeModule);
         activeModule->measure();
     }
-    mux.disable();
+    deactivateMux();
 }
 
 // Display data from all modules
@@ -204,12 +213,11 @@ void Manager::powerDown() {
     LOG("*** Powering Down ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         Module *activeModule = modules[i];
-        if (activeModule->usingMux()) {
-            mux.enablePort(activeModule->getMuxPort());
-        }
+        activateMuxCommunication(activeModule);
         activeModule->powerDown();
     }
-    mux.disable();
+
+    deactivateMux();
 
     /* Force Serial reconnection when powering up */
     Serial.end();
@@ -259,12 +267,10 @@ void Manager::powerUp(bool waitForSerial) {
     LOG("*** Powering Up ***");
     for (size_t i = 0; i < numRegisteredModules; i++) {
         Module *activeModule = modules[i];
-        if (activeModule->usingMux()) {
-            mux.enablePort(activeModule->getMuxPort());
-        }
+        activateMuxCommunication(activeModule);
         activeModule->powerUp();
     }
-    mux.disable();
+    deactivateMux();
 }
 
 void Manager::readSerialNum() {
