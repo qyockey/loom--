@@ -27,7 +27,7 @@ class Loom_STEMMA : public Module {
 
   public:
     /**
-     * Constructs a new TSL2591 sensor
+     * Constructs a new STEMMA sensor
      * @param data Pointer to STEMMA measured data structure
      * @param addr I2C address that is assigned to the sensor
      */
