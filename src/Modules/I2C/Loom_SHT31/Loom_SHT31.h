@@ -4,6 +4,8 @@
 
 #include "Modules/Module.h"
 
+#define LOOM_SHT31_ADDR_DEFAULT 0x44
+
 struct SHT31Data {
     float temperatureC;
     float humidity;
@@ -35,7 +37,7 @@ class Loom_SHT31 : public Module {
      */ 
     Loom_SHT31(
         struct SHT31Data *data,
-        uint8_t address = 0x44,
+        uint8_t address = LOOM_SHT31_ADDR_DEFAULT,
         int8_t muxPort = -1
     );
 
