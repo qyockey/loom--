@@ -33,6 +33,11 @@ class SdManager {
      */
     bool initialize();
 
+    /**
+     * Re-initialize the SD card after it has been powered down
+     */
+    bool reinitialize();
+
     bool isInitialized(void) { return initialized; }
 
     /**

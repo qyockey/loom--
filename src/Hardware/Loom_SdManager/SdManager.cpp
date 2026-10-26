@@ -12,8 +12,8 @@ bool SdManager::initialize() {
     /* Start the SD card with a slow SPI speed */
     if (!sd.begin(pinChipSelect, SD_SCK_MHZ(4))) {
         Serial.println(
-            "Failed to Initialize SD Card! SD Card functionality will be "
-            "disabled, is there an SD card inserted into the device?"
+            "Failed to initialize SD Card! SD Card functionality will be "
+            "disabled. Is there an SD card inserted into the device?"
         );
         return false;
     }
@@ -30,6 +30,24 @@ bool SdManager::initialize() {
 
     initialized = true;
     Serial.println("Successfully initialized SD Card!");
+    return true;
+}
+
+bool SdManager::reinitialize() {
+    Serial.println("Re-initializing SD Card...");
+
+    /* Start the SD card with a slow SPI speed */
+    if (!sd.begin(pinChipSelect, SD_SCK_MHZ(4))) {
+        Serial.println(
+            "Failed to re-initialize SD Card! SD Card functionality will be "
+            "disabled. Is there an SD card inserted into the device?"
+        );
+        initialized = false;
+        return false;
+    }
+
+    initialized = true;
+    Serial.println("Successfully re-initialized SD Card!");
     return true;
 }
 

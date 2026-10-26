@@ -77,6 +77,20 @@ class Loom_PowerRail {
     };
 
     /**
+     * Get the configuration for the power rails when waking up from sleep
+     */
+    struct PowerRailConfig getWakeConfiguration(void) {
+        return railConfigAwake;
+    };
+
+    /**
+     * Get the configuration for the power rails when going to sleep
+     */
+    struct PowerRailConfig getSleepConfiguration(void) {
+        return railConfigAsleep;
+    };
+
+    /**
      * Apply wake power rail configuration
      */
     void awakeMode(void);

@@ -255,6 +255,9 @@ void Manager::powerUp(bool waitForSerial) {
 
     /* After this, SD power is restored and logging is allowed again. */
     rails.awakeMode();
+    if (rails.getSleepConfiguration().rail_3v == RAIL_3V_OFF) {
+        sd.reinitialize();
+    }
 
     /* Allow time for Serial connection to establish with computer */
     uint64_t serialTimeout = waitForSerial ? 3000 : 0;
