@@ -36,18 +36,18 @@ void Loom_SHT31::displayData() {
         return;
     }
 
-    Serial.printf("SHT31:\n");
+    Serial.print("SHT31:\n");
     Serial.printf("    Temperature °C: %0.2f\n", data->temperatureC);
     Serial.printf("    Humidity %RH: %0.2f\n", data->humidity);
-    Serial.printf("\n");
+    Serial.print("\n");
 }
 
 void Loom_SHT31::writeCsvHeader1(File *csv) {
-    csv->printf("SHT31,,");
+    csv->print("SHT31,,");
 }
 
 void Loom_SHT31::writeCsvHeader2(File *csv) {
-    csv->printf("Temperature °C,Humidity %RH,");
+    csv->print("Temperature °C,Humidity %RH,");
 }
 
 void Loom_SHT31::writeCsvBody(File *csv) {
