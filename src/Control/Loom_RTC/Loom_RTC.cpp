@@ -72,6 +72,7 @@ uint32_t Loom_RTC::getTimestampMillis(void) {
 void Loom_RTC::setAlarm(uint32_t ms) {
     /* Set tick compare value */
     RTC->MODE0.COMP[0].reg = RTC->MODE0.COUNT.bit.COUNT + Loom_RTC::ms2tick(ms);
+    while (RTC->MODE0.STATUS.bit.SYNCBUSY == 1);
 
     /* Enable interrupt on compare match */
     RTC->MODE0.INTENSET.bit.CMP0 = 1;
