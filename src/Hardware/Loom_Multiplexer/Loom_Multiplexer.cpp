@@ -2,11 +2,15 @@
 #include "Logger/Logger.h"
 #include <Wire.h>
 
-Loom_Multiplexer::Loom_Multiplexer(uint8_t addr) {
+Loom_Multiplexer::Loom_Multiplexer(int8_t addr) {
     this->addr = addr;
 }
 
 bool Loom_Multiplexer::setBitmask(uint8_t mask) {
+    if (addr == -1) {
+        return false;
+    }
+
     Wire.beginTransmission(addr);
     Wire.write(mask);
     uint8_t status = Wire.endTransmission();

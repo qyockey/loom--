@@ -17,7 +17,7 @@ class Loom_Multiplexer {
      * Construct a new Multiplexer
      * @param addr Multiplexer I²C address
      */
-    Loom_Multiplexer(uint8_t addr = LOOM_MUX_ADDR_DEFAULT);
+    Loom_Multiplexer(int8_t addr = LOOM_MUX_ADDR_DEFAULT);
 
     /**
      * Enable a specific multiplexer port for communication
@@ -40,5 +40,5 @@ class Loom_Multiplexer {
     bool setBitmask(uint8_t mask);
 
   private:
-    uint8_t addr;
+    int8_t addr;
 };

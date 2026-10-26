@@ -27,8 +27,8 @@ class Module {
         return (muxPort > 0);
     }
 
-    uint8_t getMuxPort(void) {
-        return (uint8_t) muxPort;
+    int8_t getMuxPort(void) {
+        return muxPort;
     }
 
   protected:
